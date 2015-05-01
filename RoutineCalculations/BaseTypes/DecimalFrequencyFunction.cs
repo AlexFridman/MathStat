@@ -22,7 +22,7 @@ namespace BaseTypes
             _statisticalSeries = statisticalSeries.OrderBy(i => i);
             _selectionLength = _statisticalSeries.Count();
 
-            CalculateFrequencies();
+            BuildStatSeries();
             BuildFunction();
         }
 
@@ -30,11 +30,11 @@ namespace BaseTypes
         {
             public override string ToString()
             {
-                return string.Format("Value: {0}, Frequency: {1}", Value, Frequency);
+                return string.Format("Value: {0}, Frequency: {1}", Value, Count);
             }
 
             public decimal Value { get; set; }
-            public decimal Frequency { get; set; }
+            public int Count { get; set; }
         }
 
         public struct Point
@@ -48,12 +48,12 @@ namespace BaseTypes
             }
         }
 
-        private void CalculateFrequencies()
+        private void BuildStatSeries()
         {
             var steps =
                 _statisticalSeries.GroupBy(i => i)
                     .Select(
-                        group => new Item {Value = @group.Key, Frequency = @group.Count()/(decimal) _selectionLength})
+                        group => new Item {Value = @group.Key, Count = @group.Count()})
                     .OrderBy(s => s.Value).ToList();
 
             Frequencies = new ReadOnlyCollection<Item>(steps);
@@ -67,7 +67,7 @@ namespace BaseTypes
 
             foreach (var item in Frequencies)
             {
-                currentValue += item.Frequency;
+                currentValue += item.Count/(decimal) _selectionLength;
                 var point = new Point {X = item.Value, Y = currentValue};
 
                 points.Add(point);
