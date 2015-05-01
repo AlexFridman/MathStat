@@ -7,10 +7,8 @@ namespace BaseTypes
 {
     public class DecimalFrequencyFunction
     {
-        private readonly IEnumerable<decimal> _statisticalSeries;
         private readonly int _selectionLength;
-        public IReadOnlyCollection<Item> Frequencies { get; private set; }
-        public IReadOnlyCollection<Point> Function { get; private set; }
+        private readonly IEnumerable<decimal> _statisticalSeries;
 
         public DecimalFrequencyFunction(IEnumerable<decimal> statisticalSeries)
         {
@@ -26,54 +24,35 @@ namespace BaseTypes
             BuildFunction();
         }
 
-        public struct Item
-        {
-            public override string ToString()
-            {
-                return string.Format("Value: {0}, Frequency: {1}", Value, Count);
-            }
-
-            public decimal Value { get; set; }
-            public int Count { get; set; }
-        }
-
-        public struct Point
-        {
-            public decimal X { get; set; }
-            public decimal Y { get; set; }
-
-            public override string ToString()
-            {
-                return string.Format("X: {0}, Y: {1}", X, Y);
-            }
-        }
+        public IReadOnlyCollection<Item<decimal>> Frequencies { get; private set; }
+        public IReadOnlyCollection<Point<decimal>> Function { get; private set; }
 
         private void BuildStatSeries()
         {
             var steps =
                 _statisticalSeries.GroupBy(i => i)
                     .Select(
-                        group => new Item {Value = @group.Key, Count = @group.Count()})
+                        group => new Item<decimal> {Value = @group.Key, Count = @group.Count()})
                     .OrderBy(s => s.Value).ToList();
 
-            Frequencies = new ReadOnlyCollection<Item>(steps);
+            Frequencies = new ReadOnlyCollection<Item<decimal>>(steps);
         }
 
         private void BuildFunction()
         {
-            var points = new List<Point>(Frequencies.Count);
+            var points = new List<Point<decimal>>(Frequencies.Count);
 
             decimal currentValue = 0;
 
             foreach (var item in Frequencies)
             {
                 currentValue += item.Count/(decimal) _selectionLength;
-                var point = new Point {X = item.Value, Y = currentValue};
+                var point = new Point<decimal> {X = item.Value, Y = currentValue};
 
                 points.Add(point);
             }
 
-            Function = new ReadOnlyCollection<Point>(points);
+            Function = new ReadOnlyCollection<Point<decimal>>(points);
         }
     }
 }

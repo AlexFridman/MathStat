@@ -36,6 +36,16 @@ namespace BaseTypes
             _function = function;
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            return this;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public void Dispose()
         {
         }
@@ -62,16 +72,6 @@ namespace BaseTypes
         object IEnumerator.Current
         {
             get { return Current; }
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return this;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

@@ -5,11 +5,6 @@ namespace BaseTypes
 {
     public class Interval<T> : IEquatable<Interval<T>> where T : IComparable<T>
     {
-        public T Left { get; set; }
-        public T Right { get; set; }
-        public bool IsLeftClosed { get; set; }
-        public bool IsRightClosed { get; set; }
-
         public Interval(T left, T right, bool isLeftClosed = false, bool isRightClosed = false)
         {
             if (right.CompareTo(left) < 0)
@@ -22,6 +17,11 @@ namespace BaseTypes
             IsLeftClosed = isLeftClosed;
             IsRightClosed = isRightClosed;
         }
+
+        public T Left { get; set; }
+        public T Right { get; set; }
+        public bool IsLeftClosed { get; set; }
+        public bool IsRightClosed { get; set; }
 
         public bool Contains(T value)
         {

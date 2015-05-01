@@ -6,12 +6,12 @@ namespace BaseTypes
 {
     public class PiecewiseFunction<T> where T : IComparable<T>
     {
-        public IDictionary<Interval<T>, Func<T, T>> Functions { get; set; }
-
         public PiecewiseFunction()
         {
             Functions = new Dictionary<Interval<T>, Func<T, T>>();
         }
+
+        public IDictionary<Interval<T>, Func<T, T>> Functions { get; set; }
 
         public T Calculate(T value)
         {
