@@ -53,6 +53,7 @@
     <Compile Include="BaseTypes.Tests\IntervalTests.cs" />
     <Compile Include="BaseTypes.Tests\PiecewiseFunctionTest.cs" />
     <Compile Include="BaseTypes.Tests\DecimalIntervalTest.cs" />
+    <Compile Include="BaseTypes.Tests\DecimalFrequencyFunctionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
