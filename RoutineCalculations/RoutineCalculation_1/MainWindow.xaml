@@ -61,7 +61,29 @@
                     </Expander>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Пункт 3" />
+            <TabItem Header="Пункт 3" >
+                <StackPanel>
+                    <Expander Header="Теоретически найденная ф-ия распределения (аналитическое представление)">
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                            <Grid x:Name="AnalyticsFunctionGrid" ShowGridLines="True"
+                                  Style="{StaticResource ResourceKey=ItemStyle}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Значение" />
+                                <Label Grid.Column="0" Grid.Row="1" Content="Кол-во" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Expander>
+                    <Expander Header="Теоретически найденная ф-ия распределения">
+                        <c1:C1Chart Name="TeoreticalStatFunctionChart" HorizontalAlignment="Left" Width="700" Height="650" />
+                    </Expander>
+                </StackPanel>
+            </TabItem>
             <TabItem Header="Пункт 4" />
         </TabControl>
     </Grid>

@@ -26,7 +26,7 @@ namespace RoutineCalculation_1
         };
 
         private DoubleFrequencyFunction _rndFrequencyFunction;
-        private DoubleFrequencyFunction _teoreticakFrequencyFunction;
+        private DoubleFrequencyFunction _teoreticalFrequencyFunction;
         private int _n;
         private static double _a = 0;
         private static double _b = 10;
@@ -54,6 +54,8 @@ namespace RoutineCalculation_1
             BuildTeoreticalFrequencyFunction();
             DrawVariationalSeries();
             DrawStatFunction();
+            DrawTeorFuncPoints();
+            DrawTeorStatFunction();
         }
 
         private void BuildRndFrequencyFunction()
@@ -71,7 +73,7 @@ namespace RoutineCalculation_1
             var hypodispersionValues = new SequenceGenerator<double>(_a, _n, v => v += 1, x => _function.Calculate(x));
             var roundedValues = hypodispersionValues.Select(v => (double)Math.Round((decimal)v, 2)).ToList();
 
-            _teoreticakFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
+            _teoreticalFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
         }
 
         private void DrawVariationalSeries()
@@ -97,20 +99,7 @@ namespace RoutineCalculation_1
 
                 column++;
             }
-        }
-
-        private Label CreateLabel(string content, int gridRow = 0, int gridColumn = 0)
-        {
-            var label = new Label
-            {
-                Content = content
-            };
-
-            Grid.SetColumn(label, gridColumn);
-            Grid.SetRow(label, gridRow);
-
-            return label;
-        }
+        }        
 
         private void DrawStatFunction()
         {
@@ -124,6 +113,57 @@ namespace RoutineCalculation_1
                 ValueBinding = new Binding("Y"),
                 ChartType = ChartType.Step
             });
+        }
+
+        private void DrawTeorFuncPoints()
+        {
+            int columnCount = AnalyticsFunctionGrid.ColumnDefinitions.Count;
+            AnalyticsFunctionGrid.ColumnDefinitions.Clear();
+            AnalyticsFunctionGrid.Children.Clear();
+
+            AnalyticsFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            AnalyticsFunctionGrid.Children.Add(CreateLabel("X", 0, 0));
+            AnalyticsFunctionGrid.Children.Add(CreateLabel("Y", 1, 0));
+
+            int column = 1;
+            foreach (Point<double> point in _teoreticalFrequencyFunction.Function)
+            {
+                AnalyticsFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+                var valueLabel = CreateLabel(point.X.ToString(CultureInfo.InvariantCulture), 0, column);
+                var countLabel = CreateLabel(point.Y.ToString(CultureInfo.InvariantCulture), 1, column);
+
+                AnalyticsFunctionGrid.Children.Add(valueLabel);
+                AnalyticsFunctionGrid.Children.Add(countLabel);
+
+                column++;
+            }
+        }
+
+        private void DrawTeorStatFunction()
+        {
+            var points = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+
+            TeoreticalStatFunctionChart.Data.Children.Clear();
+            TeoreticalStatFunctionChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = points,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Step
+            });
+        }
+        private Label CreateLabel(string content, int gridRow = 0, int gridColumn = 0)
+        {
+            var label = new Label
+            {
+                Content = content
+            };
+
+            Grid.SetColumn(label, gridColumn);
+            Grid.SetRow(label, gridRow);
+
+            return label;
         }
     }
 }
