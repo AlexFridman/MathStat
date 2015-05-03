@@ -56,6 +56,7 @@ namespace RoutineCalculation_1
             DrawStatFunction();
             DrawTeorFuncPoints();
             DrawTeorStatFunction();
+            DrawCompareGraph();
         }
 
         private void BuildRndFrequencyFunction()
@@ -148,6 +149,28 @@ namespace RoutineCalculation_1
             TeoreticalStatFunctionChart.Data.Children.Add(new XYDataSeries
             {
                 ItemsSource = points,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Step
+            });
+        }
+
+        private void DrawCompareGraph()
+        {
+            var rndPoints = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+            var teorPoints = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+
+            CompareChart.Data.Children.Clear();
+            CompareChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = rndPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Step
+            });
+            CompareChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = teorPoints,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
                 ChartType = ChartType.Step
