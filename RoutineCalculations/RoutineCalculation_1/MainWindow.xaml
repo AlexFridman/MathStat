@@ -39,7 +39,17 @@
             <TabItem Header="Пункт 2">
                 <StackPanel>
                     <Expander Header="Вариационный ряд">
-                        
+                        <Grid Name="VariationalSeriesGrid" ShowGridLines="True" Style="{StaticResource ItemStyle}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Значение</Label>
+                            <Label Grid.Column="0" Grid.Row="1">Кол-во</Label>
+                        </Grid>                        
                     </Expander>
                     <Expander Header="Эмпирическая функция распределения"></Expander>
                 </StackPanel>

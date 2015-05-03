@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using BaseTypes;
 
 namespace RoutineCalculation_1
@@ -46,22 +49,63 @@ namespace RoutineCalculation_1
 
             BuildRndFrequencyFunction();
             BuildTeoreticalFrequencyFunction();
+            DrawVariationalSeries();
         }
 
         private void BuildRndFrequencyFunction()
         {
             var rnd = new Random();
 
-            var rndValues = new SequenceGenerator<double>(_a, (int) (_b - _a), v => v += 1, x => _function.Calculate(rnd.NextDouble()*_k));
+            var rndValues = new SequenceGenerator<double>(_a, _n, v => v += 1, x => _function.Calculate(rnd.NextDouble() * _k));
+            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 2)).ToList();
 
-            _rndFrequencyFunction = new DoubleFrequencyFunction(rndValues);
+            _rndFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
         }
 
         private void BuildTeoreticalFrequencyFunction()
         {
-            var hypodispersionValues = new SequenceGenerator<double>(_a, (int)(_b - _a), v => v += 1, x => _function.Calculate(x));
+            var hypodispersionValues = new SequenceGenerator<double>(_a, _n, v => v += 1, x => _function.Calculate(x));
+            var roundedValues = hypodispersionValues.Select(v => (double)Math.Round((decimal)v, 2)).ToList();
 
-            _teoreticakFrequencyFunction = new DoubleFrequencyFunction(hypodispersionValues);
+            _teoreticakFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
+        }
+
+        private void DrawVariationalSeries()
+        {
+            int columnCount = VariationalSeriesGrid.ColumnDefinitions.Count;
+            VariationalSeriesGrid.ColumnDefinitions.Clear();
+            VariationalSeriesGrid.Children.Clear();
+
+            VariationalSeriesGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            VariationalSeriesGrid.Children.Add(CreateLabel("Значение", 0, 0));
+            VariationalSeriesGrid.Children.Add(CreateLabel("Кол-во", 1, 0));
+
+            int column = 1;
+            foreach (Item<double> item in _rndFrequencyFunction.Frequencies)
+            {
+                VariationalSeriesGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+                var valueLabel = CreateLabel(item.Value.ToString(CultureInfo.InvariantCulture), 0, column);
+                var countLabel = CreateLabel(item.Count.ToString(), 1, column);
+
+                VariationalSeriesGrid.Children.Add(valueLabel);
+                VariationalSeriesGrid.Children.Add(countLabel);
+
+                column++;
+            }
+        }
+
+        private Label CreateLabel(string content, int gridRow = 0, int gridColumn = 0)
+        {
+            var label = new Label
+            {
+                Content = content
+            };
+
+            Grid.SetColumn(label, gridColumn);
+            Grid.SetRow(label, gridRow);
+
+            return label;
         }
     }
 }
