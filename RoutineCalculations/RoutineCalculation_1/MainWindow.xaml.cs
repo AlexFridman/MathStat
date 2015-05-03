@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using BaseTypes;
+using C1.WPF.C1Chart;
 
 namespace RoutineCalculation_1
 {
@@ -50,6 +53,7 @@ namespace RoutineCalculation_1
             BuildRndFrequencyFunction();
             BuildTeoreticalFrequencyFunction();
             DrawVariationalSeries();
+            DrawStatFunction();
         }
 
         private void BuildRndFrequencyFunction()
@@ -106,6 +110,20 @@ namespace RoutineCalculation_1
             Grid.SetRow(label, gridRow);
 
             return label;
+        }
+
+        private void DrawStatFunction()
+        {
+            var points = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+
+            StatFuncChart.Data.Children.Clear();
+            StatFuncChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = points,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Step
+            });
         }
     }
 }
