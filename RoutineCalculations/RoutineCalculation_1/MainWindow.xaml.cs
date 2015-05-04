@@ -18,13 +18,7 @@ namespace RoutineCalculation_1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private PiecewiseFunction<double> _function; //= new PiecewiseFunction<double>
-        //{
-        //    Functions = new Dictionary<Interval<double>, Func<double, double>>
-        //    {
-        //        {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), x => 1d/(x + 3)}
-        //    }
-        //};
+        private PiecewiseFunction<double> _function;
 
         private DoubleFrequencyFunction _rndFrequencyFunction;
         private DoubleFrequencyFunction _teoreticalFrequencyFunction;
@@ -40,21 +34,7 @@ namespace RoutineCalculation_1
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (!TryParseParameters()) return;
-            var func = ParseFunction();
-
-            if (func == null)
-            {
-                MessageBox.Show("Не удалось распознать функцию.");      
-                return;
-            }
-
-            _function = new PiecewiseFunction<double>
-            {
-                Functions = new Dictionary<Interval<double>, Func<double, double>>
-                {
-                    {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), func}
-                }
-            };
+            if (!TryBuildFunction()) return;
 
             CalculateK();
             DisplayK();
@@ -98,6 +78,27 @@ namespace RoutineCalculation_1
                 MessageBox.Show("Параметр а должен быть строго меньше b.");
                 return false;
             }
+            return true;
+        }
+
+        private bool TryBuildFunction()
+        {
+            var func = ParseFunction();
+
+            if (func == null)
+            {
+                MessageBox.Show("Не удалось распознать функцию.");
+                return false;
+            }
+
+            _function = new PiecewiseFunction<double>
+            {
+                Functions = new Dictionary<Interval<double>, Func<double, double>>
+                {
+                    {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), func}
+                }
+            };
+
             return true;
         }
 

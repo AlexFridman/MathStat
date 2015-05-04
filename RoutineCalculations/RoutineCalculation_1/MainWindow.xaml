@@ -6,8 +6,8 @@
     Title="Задание 1" MinHeight="350" Width="800" SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="ItemStyle">
-            <Setter Property="FrameworkElement.Margin" Value="15" />
-            <Setter Property="Control.Padding" Value="15" />
+            <Setter Property="FrameworkElement.Margin" Value="5" />
+            <Setter Property="Control.Padding" Value="5" />
             <Setter Property="Control.HorizontalContentAlignment" Value="Center" />
             <Setter Property="Control.VerticalContentAlignment" Value="Center" />
         </Style>
@@ -36,18 +36,31 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Функция (по параметру 'x') Y=" HorizontalAlignment="Center"/>
-                        <TextBox Name="funcTextBox" Grid.Row="0" Grid.Column="1" Text="1/(x+3)" />
-                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"   HorizontalAlignment="Center"  Content="Интервал распределения (a &lt; b)" />
-                        <Label Grid.Row="2" Grid.Column="0" Content="a" HorizontalAlignment="Center"/>
-                        <TextBox Name="aTextBox" Grid.Row="2" Grid.Column="1">0</TextBox>
-                        <Label Grid.Row="3" Grid.Column="0" Content="b" HorizontalAlignment="Center"/>
-                        <TextBox Name="bTextBox" Grid.Row="3" Grid.Column="1">10</TextBox>
-                        <Label Grid.Row="4" Grid.Column="0" Content="k" HorizontalAlignment="Center"/>
-                        <Label Name="kLabel"  Grid.Row="4" Grid.Column="1" Content="10" />
-                        <Label Grid.Row="5" Grid.Column="0" Content="n" HorizontalAlignment="Center"/>
-                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100" />
+                        <Label Grid.Row="0" Grid.Column="0" Content="Функция (по параметру 'x') Y="
+                               Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox Name="funcTextBox" Grid.Row="0" Grid.Column="1" Text="1/(x+3)"
+                                 Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                               Style="{StaticResource ResourceKey=ItemStyle}"
+                               Content="Интервал распределения (a &lt; b)" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="a" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox Name="aTextBox" Grid.Row="2" Grid.Column="1"
+                                 Style="{StaticResource ResourceKey=ItemStyle}">
+                            0
+                        </TextBox>
+                        <Label Grid.Row="3" Grid.Column="0" Content="b" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox Name="bTextBox" Grid.Row="3" Grid.Column="1"
+                                 Style="{StaticResource ResourceKey=ItemStyle}">
+                            10
+                        </TextBox>
+                        <Label Grid.Row="4" Grid.Column="0" Content="k" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Name="kLabel" Grid.Row="4" Grid.Column="1" Content="10"
+                               Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Grid.Row="5" Grid.Column="0" Content="n" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100"
+                                 Style="{StaticResource ResourceKey=ItemStyle}" />
                         <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
+                                Style="{StaticResource ResourceKey=ItemStyle}"
                                 Click="StartButton_OnClick" Content="Выполнить расчёт и построение" />
                     </Grid>
                 </StackPanel>
@@ -118,8 +131,8 @@
                         </TextBox>
                     </Expander>
                     <Expander Header="Теоретическая и эмпирическая функции распределения">
-                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650" >
-                            <c1:C1ChartLegend />    
+                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650">
+                            <c1:C1ChartLegend />
                         </c1:C1Chart>
                     </Expander>
                 </StackPanel>
