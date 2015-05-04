@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
     x:Class="RoutineCalculation_1.MainWindow"
-    Title="Задание 1" MinHeight="350" Width="800" SizeToContent="Height">
+    Title="Задание 1" MinHeight="350" Width="950" SizeToContent="Height">
     <Window.Resources>
         <Style x:Key="ItemStyle">
             <Setter Property="FrameworkElement.Margin" Value="5" />
