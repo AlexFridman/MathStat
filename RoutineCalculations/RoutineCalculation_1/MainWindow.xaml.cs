@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using BaseTypes;
 using C1.WPF.C1Chart;
+using Ciloci.Flee;
 
 namespace RoutineCalculation_1
 {
@@ -17,20 +18,20 @@ namespace RoutineCalculation_1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private PiecewiseFunction<double> _function = new PiecewiseFunction<double>
-        {
-            Functions = new Dictionary<Interval<double>, Func<double, double>>
-            {
-                {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), x => 1d/(x + 3)}
-            }
-        };
+        private PiecewiseFunction<double> _function; //= new PiecewiseFunction<double>
+        //{
+        //    Functions = new Dictionary<Interval<double>, Func<double, double>>
+        //    {
+        //        {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), x => 1d/(x + 3)}
+        //    }
+        //};
 
         private DoubleFrequencyFunction _rndFrequencyFunction;
         private DoubleFrequencyFunction _teoreticalFrequencyFunction;
         private int _n;
-        private static double _a = 0;
-        private static double _b = 10;
-        private double _k = _b - _a + _a;
+        private double _a;
+        private double _b;
+        private double _k;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,27 +39,106 @@ namespace RoutineCalculation_1
 
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (!TryParseParameters()) return;
+            var func = ParseFunction();
+
+            if (func == null)
+            {
+                MessageBox.Show("Не удалось распознать функцию.");      
+                return;
+            }
+
+            _function = new PiecewiseFunction<double>
+            {
+                Functions = new Dictionary<Interval<double>, Func<double, double>>
+                {
+                    {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), func}
+                }
+            };
+
+            CalculateK();
+            DisplayK();
+            BuildRndFrequencyFunction();
+            BuildTeoreticalFrequencyFunction();
+            DisplayVariationalSeries();
+            DisplayStatFunction();
+            DisplayTeorFuncPoints();
+            DisplayTeorStatFunction();
+            DisplayCompareGraph();
+        }
+
+        private bool TryParseParameters()
+        {
             if (!int.TryParse(nTextBox.Text, out _n))
             {
                 MessageBox.Show("Введите число в поле n.");
-                return;
+                return false;
             }
 
             if (_n < 1 || _n > 10000)
             {
                 MessageBox.Show("n должно быть больше 0, но меньше 10000");
-                return;
+                return false;
             }
 
-            BuildRndFrequencyFunction();
-            BuildTeoreticalFrequencyFunction();
-            DrawVariationalSeries();
-            DrawStatFunction();
-            DrawTeorFuncPoints();
-            DrawTeorStatFunction();
-            DrawCompareGraph();
+            if (!double.TryParse(aTextBox.Text, out _a))
+            {
+                MessageBox.Show("Введите число в поле a.");
+                return false;
+            }
+
+            if (!double.TryParse(bTextBox.Text, out _b))
+            {
+                MessageBox.Show("Введите число в поле a.");
+                return false;
+            }
+
+            if (_a >= _b)
+            {
+                MessageBox.Show("Параметр а должен быть строго меньше b.");
+                return false;
+            }
+            return true;
         }
 
+        private Func<double, double> ParseFunction()
+        {
+            try
+            {
+                return CreateExpressionForX(funcTextBox.Text);
+            }
+            catch (Exception)
+            {                          
+                return null;
+            }
+        }
+
+        private Func<double, double> CreateExpressionForX(string expression)
+        {
+            ExpressionContext context = new ExpressionContext();
+            context.Variables["x"] = 0.0d;
+
+            IGenericExpression<double> e = context.CompileGeneric<double>(expression);
+
+            Func<double, double> expressionEvaluator = (double x) =>
+            {
+                context.Variables["x"] = x;
+                var result = e.Evaluate();
+                return result;
+            };
+
+            return expressionEvaluator;
+        }
+
+        private void CalculateK()
+        {
+            _k = (_b - _a) + _a;
+        }
+
+        private void DisplayK()
+        {
+            kLabel.Content = _k.ToString(CultureInfo.InvariantCulture);
+        }
         private void BuildRndFrequencyFunction()
         {
             var rnd = new Random();
@@ -77,7 +157,7 @@ namespace RoutineCalculation_1
             _teoreticalFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
         }
 
-        private void DrawVariationalSeries()
+        private void DisplayVariationalSeries()
         {
             int columnCount = VariationalSeriesGrid.ColumnDefinitions.Count;
             VariationalSeriesGrid.ColumnDefinitions.Clear();
@@ -102,7 +182,7 @@ namespace RoutineCalculation_1
             }
         }        
 
-        private void DrawStatFunction()
+        private void DisplayStatFunction()
         {
             var points = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
 
@@ -116,7 +196,7 @@ namespace RoutineCalculation_1
             });
         }
 
-        private void DrawTeorFuncPoints()
+        private void DisplayTeorFuncPoints()
         {
             int columnCount = AnalyticsFunctionGrid.ColumnDefinitions.Count;
             AnalyticsFunctionGrid.ColumnDefinitions.Clear();
@@ -141,7 +221,7 @@ namespace RoutineCalculation_1
             }
         }
 
-        private void DrawTeorStatFunction()
+        private void DisplayTeorStatFunction()
         {
             var points = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
 
@@ -155,25 +235,29 @@ namespace RoutineCalculation_1
             });
         }
 
-        private void DrawCompareGraph()
+        private void DisplayCompareGraph()
         {
             var rndPoints = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
             var teorPoints = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
 
             CompareChart.Data.Children.Clear();
+
             CompareChart.Data.Children.Add(new XYDataSeries
             {
                 ItemsSource = rndPoints,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step
+                ChartType = ChartType.Step,
+                Label = "стат. ф-я"
             });
+
             CompareChart.Data.Children.Add(new XYDataSeries
             {
                 ItemsSource = teorPoints,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step
+                ChartType = ChartType.Step,
+                Label = "теор. ф-я"
             });
         }
         private Label CreateLabel(string content, int gridRow = 0, int gridColumn = 0)

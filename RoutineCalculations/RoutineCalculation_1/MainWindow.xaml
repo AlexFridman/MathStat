@@ -32,17 +32,22 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="Функция" />
-                        <Label Grid.Row="0" Grid.Column="1" Content="Y=1/(x+3)" />
-                        <Label Grid.Row="1" Grid.Column="0" Content="Интервал распределения" />
-                        <Label Grid.Row="1" Grid.Column="1" Content="[0, 10]" />
-                        <Label Grid.Row="2" Grid.Column="0" Content="k" />
-                        <Label Grid.Row="2" Grid.Column="1" Content="10" />
-                        <Label Grid.Row="3" Grid.Column="0" Content="n" />
-                        <TextBox x:Name="nTextBox" Grid.Row="3" Grid.Column="1" Text="100" />
-                        <Button x:Name="StartButton" Grid.Row="4" Grid.Column="1" VerticalAlignment="Top"
+                        <Label Grid.Row="0" Grid.Column="0" Content="Функция (по параметру 'x') Y=" HorizontalAlignment="Center"/>
+                        <TextBox Name="funcTextBox" Grid.Row="0" Grid.Column="1" Text="1/(x+3)" />
+                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"   HorizontalAlignment="Center"  Content="Интервал распределения (a &lt; b)" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="a" HorizontalAlignment="Center"/>
+                        <TextBox Name="aTextBox" Grid.Row="2" Grid.Column="1">0</TextBox>
+                        <Label Grid.Row="3" Grid.Column="0" Content="b" HorizontalAlignment="Center"/>
+                        <TextBox Name="bTextBox" Grid.Row="3" Grid.Column="1">10</TextBox>
+                        <Label Grid.Row="4" Grid.Column="0" Content="k" HorizontalAlignment="Center"/>
+                        <Label Name="kLabel"  Grid.Row="4" Grid.Column="1" Content="10" />
+                        <Label Grid.Row="5" Grid.Column="0" Content="n" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100" />
+                        <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
                                 Click="StartButton_OnClick" Content="Выполнить расчёт и построение" />
                     </Grid>
                 </StackPanel>
@@ -50,12 +55,10 @@
             <TabItem Header="Пункт 2">
                 <StackPanel>
                     <Expander Header="Описание задания">
-                        <ScrollViewer>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                Для полученной СВ построить вариационный ряд, эмпирическую функцию распределения СВ Y.
-                                Результаты представить в виде таблицы и графика.
-                            </TextBox>
-                        </ScrollViewer>
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Для полученной СВ построить вариационный ряд, эмпирическую функцию распределения СВ Y.
+                            Результаты представить в виде таблицы и графика.
+                        </TextBox>
                     </Expander>
                     <Expander Header="Вариационный ряд">
                         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
@@ -81,11 +84,9 @@
             <TabItem Header="Пункт 3">
                 <StackPanel>
                     <Expander Header="Описание задания">
-                        <ScrollViewer>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                Найти теоретически функцию распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
-                            </TextBox>
-                        </ScrollViewer>
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Найти теоретически функцию распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
+                        </TextBox>
                     </Expander>
                     <Expander Header="Теоретически найденная ф-ия распределения (аналитическое представление)">
                         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
@@ -112,14 +113,14 @@
             <TabItem Header="Пункт 4">
                 <StackPanel>
                     <Expander Header="Описание задания">
-                        <ScrollViewer>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                Сравнить полученные результаты, представив графики теоретической и эмпирической функций распределения в одном окне.
-                            </TextBox>
-                        </ScrollViewer>
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Сравнить полученные результаты, представив графики теоретической и эмпирической функций распределения в одном окне.
+                        </TextBox>
                     </Expander>
                     <Expander Header="Теоретическая и эмпирическая функции распределения">
-                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650" />
+                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650" >
+                            <c1:C1ChartLegend />    
+                        </c1:C1Chart>
                     </Expander>
                 </StackPanel>
             </TabItem>
