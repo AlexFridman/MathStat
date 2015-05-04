@@ -208,7 +208,7 @@ namespace RoutineCalculation_1
                 ItemsSource = points,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step
+                ChartType = ChartType.Line
             });
         }
 
@@ -237,7 +237,7 @@ namespace RoutineCalculation_1
                 ItemsSource = teorPoints,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step,
+                ChartType = ChartType.Line,
                 Label = "теор. ф-я"
             });
         }
