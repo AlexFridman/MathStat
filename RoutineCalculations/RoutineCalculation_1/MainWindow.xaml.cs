@@ -3,29 +3,42 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using BaseTypes;
 using C1.WPF.C1Chart;
-using Ciloci.Flee;
 
 namespace RoutineCalculation_1
 {
-    /// <summary>
-    ///     Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private PiecewiseFunction<double> _function;
+        private readonly PiecewiseFunction<double> _function = new PiecewiseFunction<double>
+        {
+            Functions = new Dictionary<Interval<double>, Func<double, double>>
+            {
+                {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity), x => 1d/(x + 3)}
+            }
+        };
 
-        private DoubleFrequencyFunction _rndFrequencyFunction;
-        private DoubleFrequencyFunction _teoreticalFrequencyFunction;
+        private readonly PiecewiseFunction<double> _teoreticalFunc = new PiecewiseFunction<double>
+        {
+            Functions = new Dictionary<Interval<double>, Func<double, double>>
+            {
+                {new DoubleInterval(double.NegativeInfinity, 1d/13), x => 0},
+                {new DoubleInterval(1d/13, 1d/3, true, true), x => -1d/10/x + 1.3},
+                {new DoubleInterval(1d/3, double.PositiveInfinity), x => 1}
+            }
+        };
+
+        private DoubleFrequencyFunction _frequencyFunctionPoints;
+        private IEnumerable<Point> _teoreticalFunctionPoints;
+
         private int _n;
         private double _a;
         private double _b;
         private double _k;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,12 +47,12 @@ namespace RoutineCalculation_1
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (!TryParseParameters()) return;
-            if (!TryBuildFunction()) return;
 
             CalculateK();
             DisplayK();
             BuildRndFrequencyFunction();
-            BuildTeoreticalFrequencyFunction();
+            BuildTeoreticalFunction();
+
             DisplayVariationalSeries();
             DisplayStatFunction();
             DisplayTeorFuncPoints();
@@ -61,13 +74,13 @@ namespace RoutineCalculation_1
                 return false;
             }
 
-            if (!double.TryParse(aTextBox.Text, out _a))
+            if (!double.TryParse(aTextBox.Content.ToString(), out _a))
             {
                 MessageBox.Show("Введите число в поле a.");
                 return false;
             }
 
-            if (!double.TryParse(bTextBox.Text, out _b))
+            if (!double.TryParse(bTextBox.Content.ToString(), out _b))
             {
                 MessageBox.Show("Введите число в поле a.");
                 return false;
@@ -81,55 +94,6 @@ namespace RoutineCalculation_1
             return true;
         }
 
-        private bool TryBuildFunction()
-        {
-            var func = ParseFunction();
-
-            if (func == null)
-            {
-                MessageBox.Show("Не удалось распознать функцию.");
-                return false;
-            }
-
-            _function = new PiecewiseFunction<double>
-            {
-                Functions = new Dictionary<Interval<double>, Func<double, double>>
-                {
-                    {new DoubleInterval(double.NegativeInfinity, double.PositiveInfinity, true, true), func}
-                }
-            };
-
-            return true;
-        }
-
-        private Func<double, double> ParseFunction()
-        {
-            try
-            {
-                return CreateExpressionForX(funcTextBox.Text);
-            }
-            catch (Exception)
-            {                          
-                return null;
-            }
-        }
-
-        private Func<double, double> CreateExpressionForX(string expression)
-        {
-            ExpressionContext context = new ExpressionContext();
-            context.Variables["x"] = 0.0d;
-
-            IGenericExpression<double> e = context.CompileGeneric<double>(expression);
-
-            Func<double, double> expressionEvaluator = (double x) =>
-            {
-                context.Variables["x"] = x;
-                var result = e.Evaluate();
-                return result;
-            };
-
-            return expressionEvaluator;
-        }
 
         private void CalculateK()
         {
@@ -140,36 +104,42 @@ namespace RoutineCalculation_1
         {
             kLabel.Content = _k.ToString(CultureInfo.InvariantCulture);
         }
+
         private void BuildRndFrequencyFunction()
         {
             var rnd = new Random();
 
-            var rndValues = new SequenceGenerator<double>(_a, _n, v => v += 1, x => _function.Calculate(rnd.NextDouble() * _k));
+            var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
+                x => _function.Calculate(rnd.NextDouble()*_k));
             var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 2)).ToList();
 
-            _rndFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
+            _frequencyFunctionPoints = new DoubleFrequencyFunction(roundedValues);
         }
 
-        private void BuildTeoreticalFrequencyFunction()
+        private void BuildTeoreticalFunction()
         {
-            var hypodispersionValues = new SequenceGenerator<double>(_a, _n, v => v += 1, x => _function.Calculate(x));
-            var roundedValues = hypodispersionValues.Select(v => (double)Math.Round((decimal)v, 2)).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var yValues = xValues.Select(x => _teoreticalFunc.Calculate(x));
 
-            _teoreticalFrequencyFunction = new DoubleFrequencyFunction(roundedValues);
+            var points =
+                xValues.Zip(yValues,
+                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
+                    .ToList();
+
+            _teoreticalFunctionPoints = points;
         }
 
         private void DisplayVariationalSeries()
         {
-            int columnCount = VariationalSeriesGrid.ColumnDefinitions.Count;
             VariationalSeriesGrid.ColumnDefinitions.Clear();
             VariationalSeriesGrid.Children.Clear();
 
             VariationalSeriesGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            VariationalSeriesGrid.Children.Add(CreateLabel("Значение", 0, 0));
-            VariationalSeriesGrid.Children.Add(CreateLabel("Кол-во", 1, 0));
+            VariationalSeriesGrid.Children.Add(CreateLabel("Значение"));
+            VariationalSeriesGrid.Children.Add(CreateLabel("Кол-во", 1));
 
-            int column = 1;
-            foreach (Item<double> item in _rndFrequencyFunction.Frequencies)
+            var column = 1;
+            foreach (var item in _frequencyFunctionPoints.Frequencies)
             {
                 VariationalSeriesGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
@@ -181,11 +151,15 @@ namespace RoutineCalculation_1
 
                 column++;
             }
-        }        
+        }
 
         private void DisplayStatFunction()
         {
-            var points = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+            var points =
+                new ObservableCollection<Point>(_frequencyFunctionPoints.Function.Select(p => new Point(p.X, p.Y)));
+
+            StatFuncChart.View.AxisX.Min = 0;
+            StatFuncChart.View.AxisX.Max = 1;
 
             StatFuncChart.Data.Children.Clear();
             StatFuncChart.Data.Children.Add(new XYDataSeries
@@ -199,16 +173,15 @@ namespace RoutineCalculation_1
 
         private void DisplayTeorFuncPoints()
         {
-            int columnCount = AnalyticsFunctionGrid.ColumnDefinitions.Count;
             AnalyticsFunctionGrid.ColumnDefinitions.Clear();
             AnalyticsFunctionGrid.Children.Clear();
 
             AnalyticsFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            AnalyticsFunctionGrid.Children.Add(CreateLabel("X", 0, 0));
-            AnalyticsFunctionGrid.Children.Add(CreateLabel("Y", 1, 0));
+            AnalyticsFunctionGrid.Children.Add(CreateLabel("X"));
+            AnalyticsFunctionGrid.Children.Add(CreateLabel("Y", 1));
 
-            int column = 1;
-            foreach (Point<double> point in _teoreticalFrequencyFunction.Function)
+            var column = 1;
+            foreach (var point in _teoreticalFunctionPoints)
             {
                 AnalyticsFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
@@ -224,7 +197,10 @@ namespace RoutineCalculation_1
 
         private void DisplayTeorStatFunction()
         {
-            var points = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+            var points = new ObservableCollection<Point>(_teoreticalFunctionPoints);
+
+            TeoreticalStatFunctionChart.View.AxisX.Min = 0;
+            TeoreticalStatFunctionChart.View.AxisX.Max = 1;
 
             TeoreticalStatFunctionChart.Data.Children.Clear();
             TeoreticalStatFunctionChart.Data.Children.Add(new XYDataSeries
@@ -232,16 +208,20 @@ namespace RoutineCalculation_1
                 ItemsSource = points,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step
+                ChartType = ChartType.Line
             });
         }
 
         private void DisplayCompareGraph()
         {
-            var rndPoints = new ObservableCollection<Point>(_rndFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
-            var teorPoints = new ObservableCollection<Point>(_teoreticalFrequencyFunction.Function.Select(p => new Point(p.X, p.Y)));
+            var rndPoints =
+                new ObservableCollection<Point>(_frequencyFunctionPoints.Function.Select(p => new Point(p.X, p.Y)));
+            var teorPoints = new ObservableCollection<Point>(_teoreticalFunctionPoints);
 
             CompareChart.Data.Children.Clear();
+
+            CompareChart.View.AxisX.Min = 0;
+            CompareChart.View.AxisX.Max = 1;
 
             CompareChart.Data.Children.Add(new XYDataSeries
             {
@@ -257,10 +237,11 @@ namespace RoutineCalculation_1
                 ItemsSource = teorPoints,
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Step,
+                ChartType = ChartType.Line,
                 Label = "теор. ф-я"
             });
         }
+
         private Label CreateLabel(string content, int gridRow = 0, int gridColumn = 0)
         {
             var label = new Label
