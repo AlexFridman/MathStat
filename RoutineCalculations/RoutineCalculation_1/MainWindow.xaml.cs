@@ -37,7 +37,6 @@ namespace RoutineCalculation_1
         private int _n;
         private double _a;
         private double _b;
-        private double _k;
 
         public MainWindow()
         {
@@ -48,8 +47,6 @@ namespace RoutineCalculation_1
         {
             if (!TryParseParameters()) return;
 
-            CalculateK();
-            DisplayK();
             BuildRndFrequencyFunction();
             BuildTeoreticalFunction();
 
@@ -94,23 +91,12 @@ namespace RoutineCalculation_1
             return true;
         }
 
-
-        private void CalculateK()
-        {
-            _k = (_b - _a) + _a;
-        }
-
-        private void DisplayK()
-        {
-            kLabel.Content = _k.ToString(CultureInfo.InvariantCulture);
-        }
-
         private void BuildRndFrequencyFunction()
         {
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble()*_k));
+                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
             var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 2)).ToList();
 
             _frequencyFunctionPoints = new DoubleFrequencyFunction(roundedValues);
