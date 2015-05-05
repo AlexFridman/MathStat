@@ -57,12 +57,9 @@
                             10
 
                         </Label>
-
-                        <Label Grid.Row="4" Grid.Column="0" Content="k" Style="{StaticResource ResourceKey=ItemStyle}" />
-                        <Label Name="kLabel" Grid.Row="4" Grid.Column="1" Content="10"
-                               Style="{StaticResource ResourceKey=ItemStyle}" />
+                        
                         <Label Grid.Row="5" Grid.Column="0" Content="n" Style="{StaticResource ResourceKey=ItemStyle}" />
-                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100"
+                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="1000"
                                  Style="{StaticResource ResourceKey=ItemStyle}" />
                         <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
                                 Style="{StaticResource ResourceKey=ItemStyle}"
