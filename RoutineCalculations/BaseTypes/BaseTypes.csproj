@@ -40,11 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DoubleFrequencyFunction.cs" />
-    <Compile Include="DecimalInterval.cs" />
-    <Compile Include="DoubleInterval.cs" />
-    <Compile Include="DecimalFrequencyFunction.cs" />
-    <Compile Include="Interval.cs" />
+    <Compile Include="FrequencyFunction\DoubleFrequencyFunction.cs" />
+    <Compile Include="Interval\DecimalInterval.cs" />
+    <Compile Include="Interval\DoubleInterval.cs" />
+    <Compile Include="FrequencyFunction\DecimalFrequencyFunction.cs" />
+    <Compile Include="Interval\Interval.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="PiecewiseFunction.cs" />
     <Compile Include="Point.cs" />

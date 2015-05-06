@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BaseTypes
+namespace BaseTypes.Interval
 {
     public class Interval<T> : IEquatable<Interval<T>> where T : IComparable<T>
     {
