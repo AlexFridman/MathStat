@@ -1,4 +1,4 @@
-﻿namespace BaseTypes
+﻿namespace BaseTypes.Interval
 {
     public class DecimalInterval : Interval<decimal>
     {

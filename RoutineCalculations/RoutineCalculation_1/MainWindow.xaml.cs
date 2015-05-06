@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using BaseTypes;
+using BaseTypes.FrequencyFunction;
+using BaseTypes.Interval;
 using C1.WPF.C1Chart;
 
 namespace RoutineCalculation_1

@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DoubleHistogram.cs" />
     <Compile Include="FrequencyFunction\DoubleFrequencyFunction.cs" />
     <Compile Include="Interval\DecimalInterval.cs" />
     <Compile Include="Interval\DoubleInterval.cs" />

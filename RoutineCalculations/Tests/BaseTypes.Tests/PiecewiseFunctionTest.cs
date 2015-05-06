@@ -1,5 +1,6 @@
 ﻿using System;
 using BaseTypes;
+using BaseTypes.Interval;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.BaseTypes.Tests

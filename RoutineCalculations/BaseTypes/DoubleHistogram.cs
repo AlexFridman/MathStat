@@ -1,0 +1,174 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BaseTypes.Interval;
+
+namespace BaseTypes
+{
+    public class DoubleHistogram
+    {
+        public class Step
+        {
+            private readonly int _overalValuesCount;
+            private double _valuesCount;
+
+            public Step(int overalValuesCount)
+            {
+                _overalValuesCount = overalValuesCount;
+            }
+
+            public DoubleInterval Interval { get; set; }
+
+            public double ValuesCount
+            {
+                get { return _valuesCount; }
+                set
+                {
+                    _valuesCount = value;
+                    F = _valuesCount/(_overalValuesCount*Interval.Length);
+                }
+            }
+
+            public double F { get; set; }
+
+            public override string ToString()
+            {
+                return string.Format("F: {0}, Interval: {1}, ValuesCount: {2}", F, Interval, ValuesCount);
+            }
+        }
+
+        private readonly IList<double> _orederdVariationalSeries;
+        private readonly double _minValue;
+        private readonly double _maxValue;
+
+        private readonly int _varitionalSeriesLength;
+
+        public DoubleHistogram(IEnumerable<double> variationalSeries)
+        {
+            _orederdVariationalSeries = variationalSeries.OrderBy(v => v).ToList();
+            _minValue = _orederdVariationalSeries.Min();
+            _maxValue = _orederdVariationalSeries.Max();
+            _varitionalSeriesLength = _orederdVariationalSeries.Count;
+        }
+
+        public IEnumerable<Step> EqualIntervalHistogram()
+        {
+            var intervalCount = DefineIntervalCount(_varitionalSeriesLength); // M
+
+            var intervals = BuildEqualIntervals(_minValue, _maxValue, intervalCount);
+            var histogramSteps =
+                intervals.Select(i => new Step(_varitionalSeriesLength) {Interval = i, ValuesCount = 0}).ToList();
+
+            for (var i = 0; i < _varitionalSeriesLength; i++)
+            {
+                var value = _orederdVariationalSeries[i];
+
+                var ownerSteps = histogramSteps.Where(step => step.Interval.Contains(value)).ToList();
+
+                if (!ownerSteps.Any())
+                {
+                    throw new Exception("Intervals buit incorrectly.");
+                }
+                if (ownerSteps.Count() == 2)
+                {
+                    foreach (var step in ownerSteps)
+                    {
+                        step.ValuesCount += 0.5;
+                    }
+                }
+                else
+                {
+                    ownerSteps.First().ValuesCount += 1;
+                }
+            }
+
+            return histogramSteps;
+        }
+
+        private int DefineIntervalCount(int seriesLength)
+        {
+            int intervalCount; // M
+
+            if (_varitionalSeriesLength <= 100)
+            {
+                intervalCount = (int) Math.Sqrt(_varitionalSeriesLength);
+            }
+            else
+            {
+                intervalCount = (int) (0.5*Math.Log10(_varitionalSeriesLength));
+            }
+
+            return intervalCount;
+        }
+
+        private IEnumerable<DoubleInterval> BuildEqualIntervals(double minValue, double maxValue, int intervalCount)
+        {
+            var intervalLength = (maxValue - minValue)/intervalCount;
+            var intervals = new List<DoubleInterval>(intervalCount);
+
+            var tempLeft = _minValue;
+            var tempRight = tempLeft + intervalLength;
+
+            for (var i = 0; i < intervalCount; i++)
+            {
+                var interval = new DoubleInterval(tempLeft, tempRight, true, true);
+                intervals.Add(interval);
+
+                tempLeft = tempRight;
+                tempRight += intervalLength;
+            }
+
+            return intervals;
+        }
+
+        public IEnumerable<Step> EqualProbabilityHistogram(int intervalCount)
+        {
+            if (intervalCount < 1)
+            {
+                throw new ArgumentOutOfRangeException("intervalCount");
+            }
+            if (!IsCorrectIntervalCountForEqualProbabilityHistogram(_varitionalSeriesLength, intervalCount))
+            {
+                throw new ArgumentException("Incorrect interval count.", "intervalCount");
+            }
+
+            var valuesPerInterval = _varitionalSeriesLength/intervalCount; // h
+            var steps = new List<Step>(intervalCount);
+            double tempLeft = _orederdVariationalSeries.First();
+            double tempRight = (_orederdVariationalSeries.Skip(valuesPerInterval).First() +
+                                _orederdVariationalSeries.Take(valuesPerInterval).Last()
+                )/2;
+
+            for (var i = 0; i < intervalCount; i++)
+            {
+                var step = new Step(_varitionalSeriesLength)
+                {
+                    Interval = new DoubleInterval(tempLeft, tempRight),
+                    ValuesCount = valuesPerInterval
+                };
+
+                steps.Add(step);
+
+                tempLeft = tempRight;
+
+                if (i < intervalCount - 2)
+                {
+                    tempRight = (_orederdVariationalSeries.Skip((i + 2) * valuesPerInterval).First() +
+                                    _orederdVariationalSeries.Take((i + 2) * valuesPerInterval).Last()) / 2;    
+                }
+                else
+                {
+                    tempRight = _orederdVariationalSeries.Last();
+                }
+                
+            }
+
+            return steps;
+        }
+
+        private bool IsCorrectIntervalCountForEqualProbabilityHistogram(int seriesLength, int intervalCount)
+        {
+            return seriesLength%intervalCount == 0;
+        }
+    }
+}

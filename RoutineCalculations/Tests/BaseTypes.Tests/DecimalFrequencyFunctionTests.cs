@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using BaseTypes;
+using BaseTypes.FrequencyFunction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.BaseTypes.Tests
