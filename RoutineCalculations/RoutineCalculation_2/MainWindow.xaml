@@ -63,7 +63,7 @@
                                  Style="{StaticResource ResourceKey=ItemStyle}" />
                         <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
                                 Style="{StaticResource ResourceKey=ItemStyle}"
-                                Click="StartButton_OnClick" Content="Выполнить расчёт и построение" IsDefault="True"/>
+                                Click="StartButton_OnClick" Content="Выполнить расчёт и построение" IsDefault="True" />
                     </Grid>
                 </StackPanel>
             </TabItem>
@@ -71,8 +71,7 @@
                 <StackPanel>
                     <Expander Header="Описание задания">
                         <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                            Для полученной СВ построить вариационный ряд, эмпирическую функцию распределения СВ Y.
-                            Результаты представить в виде таблицы и графика.
+                            Гистограмма (равноинт.), полигон, эмпирич. ф-я по сгрупп. данным
                         </TextBox>
                     </Expander>
                     <Expander Header="Вариационный ряд">
@@ -92,9 +91,22 @@
                         </ScrollViewer>
                     </Expander>
                     <Expander Header="Эмпирическая функция распределения">
-                        <c1:C1Chart Name="RndHistogram" HorizontalAlignment="Left" Height="700" Width="700" >
-                           
-                        </c1:C1Chart>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Grid.ColumnSpan="2" HorizontalContentAlignment="Center">Гистограмма(равноинт.) и полигон</Label>
+                            <c1:C1Chart Grid.Row="1" Name="RndHistogram" HorizontalAlignment="Left" Height="700" Width="700" />
+                            <StackPanel Grid.Row="1" Grid.Column="1">
+                                <CheckBox Name="HistogramCheckBox" Content="Гистограмма" IsChecked="True" Checked="HistogramCheckBox_OnChecked" Unchecked="HistogramCheckBox_OnUnchecked"/>
+                                <CheckBox Name="PolygoneCheckBox" Content="Полигон" IsChecked="True" Checked="PolygoneCheckBox_OnChecked" Unchecked="PolygoneCheckBox_OnUnchecked"/>
+                            </StackPanel>
+                        </Grid>
                     </Expander>
                 </StackPanel>
             </TabItem>

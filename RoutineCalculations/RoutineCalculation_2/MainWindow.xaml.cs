@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,6 +10,8 @@ using BaseTypes;
 using BaseTypes.FrequencyFunction;
 using BaseTypes.Interval;
 using C1.WPF.C1Chart;
+using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
 
 namespace RoutineCalculation_2
 {
@@ -102,8 +105,8 @@ namespace RoutineCalculation_2
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 2)).ToList();
+                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
+            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 2)).ToList();
 
             _rndVariationalSeries = roundedValues.ToArray();
         }
@@ -113,8 +116,8 @@ namespace RoutineCalculation_2
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 2)).ToList();
+                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
+            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 2)).ToList();
 
             _frequencyFunctionPoints = new DoubleFrequencyFunction(roundedValues);
         }
@@ -122,12 +125,12 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
-                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
+                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
                     .ToList();
 
             _teoreticalFunctionPoints = points;
@@ -237,6 +240,44 @@ namespace RoutineCalculation_2
                 ChartType = ChartType.Line,
                 Name = "Bar"
             };
+        }
+
+        private void HistogramCheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            var bars = RndHistogram.Data.Children.Where(ch => ch.Name == "Bar");
+            foreach (var bar in bars)
+            {
+                bar.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void HistogramCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            var bars = RndHistogram.Data.Children.Where(ch => ch.Name == "Bar");
+            foreach (var bar in bars)
+            {
+                bar.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void PolygoneCheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            var polygon = RndHistogram.Data.Children.FirstOrDefault(ch => ch.Name == "Polygon");
+
+            if (polygon != null)
+            {
+                polygon.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void PolygoneCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            var polygon = RndHistogram.Data.Children.FirstOrDefault(ch => ch.Name == "Polygon");
+
+            if (polygon != null)
+            {
+                polygon.Visibility = Visibility.Hidden;
+            }
         }
     }
 }
