@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
     x:Class="RoutineCalculation_2.MainWindow"
-    Title="Задание 1" MinHeight="350" Width="950" SizeToContent="Height">
+    Title="Задание 1" MinHeight="350" Width="950" SizeToContent="Manual">
     <Window.Resources>
         <Style x:Key="ItemStyle">
             <Setter Property="FrameworkElement.Margin" Value="5" />
@@ -68,47 +68,78 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Пункт 2">
-                <StackPanel>
-                    <Expander Header="Описание задания">
-                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                            Гистограмма (равноинт.), полигон, эмпирич. ф-я по сгрупп. данным
-                        </TextBox>
-                    </Expander>
-                    <Expander Header="Вариационный ряд">
-                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                            <Grid x:Name="VariationalSeriesGrid" ShowGridLines="True"
-                                  Style="{StaticResource ResourceKey=ItemStyle}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Expander Header="Описание задания">
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                Гистограмма (равноинт.), полигон, эмпирич. ф-я по сгрупп. данным
+                            </TextBox>
+                        </Expander>
+                        <Expander Header="Гистограмма (таблица)" MaxHeight="200">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <Grid x:Name="HistogramGrid" ShowGridLines="True"
+                                      Style="{StaticResource ResourceKey=ItemStyle}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Content="i" />
+                                    <Label Grid.Column="1" Content="A(i)" />
+                                    <Label Grid.Column="2" Content="B(i)" />
+                                    <Label Grid.Column="3" Content="v(i)" />
+                                    <Label Grid.Column="4" Content="h(i)" />
+                                    <Label Grid.Column="5" Content="f*(i)" />
+                                </Grid>
+                            </ScrollViewer>
+                        </Expander>
+                        <Expander Header="Полигон (таблица)" MaxHeight="200">
+                            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                                <Grid x:Name="PolygonGrid" ShowGridLines="True"
+                                      Style="{StaticResource ResourceKey=ItemStyle}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />                                        
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Content="X" />
+                                    <Label Grid.Column="0" Grid.Row="1" Content="Y" />
+                                </Grid>
+                            </ScrollViewer>
+                        </Expander>
+                        <Expander Header="Гистограмма (равноинт.), полигон">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Content="Значение" />
-                                <Label Grid.Column="0" Grid.Row="1" Content="Кол-во" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Label Grid.ColumnSpan="2" HorizontalContentAlignment="Center">Гистограмма(равноинт.) и полигон</Label>
+                                <c1:C1Chart Grid.Row="1" Name="RndHistogram" HorizontalAlignment="Left" Height="700"
+                                            Width="700" />
+                                <StackPanel Grid.Row="1" Grid.Column="1">
+                                    <CheckBox Name="HistogramCheckBox" Content="Гистограмма" IsChecked="True"
+                                              Checked="HistogramCheckBox_OnChecked"
+                                              Unchecked="HistogramCheckBox_OnUnchecked" />
+                                    <CheckBox Name="PolygoneCheckBox" Content="Полигон" IsChecked="True"
+                                              Checked="PolygoneCheckBox_OnChecked"
+                                              Unchecked="PolygoneCheckBox_OnUnchecked" />
+                                </StackPanel>
                             </Grid>
-                        </ScrollViewer>
-                    </Expander>
-                    <Expander Header="Эмпирическая функция распределения">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Label Grid.ColumnSpan="2" HorizontalContentAlignment="Center">Гистограмма(равноинт.) и полигон</Label>
-                            <c1:C1Chart Grid.Row="1" Name="RndHistogram" HorizontalAlignment="Left" Height="700" Width="700" />
-                            <StackPanel Grid.Row="1" Grid.Column="1">
-                                <CheckBox Name="HistogramCheckBox" Content="Гистограмма" IsChecked="True" Checked="HistogramCheckBox_OnChecked" Unchecked="HistogramCheckBox_OnUnchecked"/>
-                                <CheckBox Name="PolygoneCheckBox" Content="Полигон" IsChecked="True" Checked="PolygoneCheckBox_OnChecked" Unchecked="PolygoneCheckBox_OnUnchecked"/>
-                            </StackPanel>
-                        </Grid>
-                    </Expander>
-                </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="Пункт 3">
                 <StackPanel>

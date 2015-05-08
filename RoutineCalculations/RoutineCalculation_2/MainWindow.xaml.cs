@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -62,6 +63,8 @@ namespace RoutineCalculation_2
             InitializeRndHistogram();
             DisplayEqualIntervalsHistogram();
             DisplayPolygon();
+            DisplayHistogramTable();
+            DisplayPolygonPointsTable();
         }
 
         #region reoutine_calc_1
@@ -201,6 +204,85 @@ namespace RoutineCalculation_2
             }
         }
 
+        private void DisplayHistogramTable()
+        {
+            try
+            {
+                HistogramGrid.Children.Clear();
+                HistogramGrid.RowDefinitions.Clear();                      
+      
+                var indexHeadeLabel = CreateLabel("i", 0);
+                var AiHeaderLabel = CreateLabel("A(i)",0, 1);
+                var BiHeaderLabel = CreateLabel("B(i)",0, 2);
+                var ViHeaderLabel = CreateLabel("v(i)",0, 3);
+                var HiHeaderLabel = CreateLabel("h(i)",0, 4);
+                var FiHeaderLabel = CreateLabel("f*(i)", 0, 5);
+
+                HistogramGrid.RowDefinitions.Add(new RowDefinition());
+                HistogramGrid.Children.Add(indexHeadeLabel);
+                HistogramGrid.Children.Add(AiHeaderLabel);
+                HistogramGrid.Children.Add(BiHeaderLabel);
+                HistogramGrid.Children.Add(ViHeaderLabel);
+                HistogramGrid.Children.Add(HiHeaderLabel);
+                HistogramGrid.Children.Add(FiHeaderLabel);
+
+                var bars = _histogram.EqualIntervalHistogram().ToList();
+
+                int index = 1;
+                foreach (DoubleHistogram.Bar bar in bars)
+                {
+                    var indexLabel = CreateLabel(index.ToString(), index);
+                    var AiLabel = CreateLabel(bar.Interval.Left.ToString("F3"), index, 1);
+                    var BiLabel = CreateLabel(bar.Interval.Right.ToString("F3"), index, 2);
+                    var ViLabel = CreateLabel(bar.ValuesCount.ToString("F3"), index, 3);
+                    var HiLabel = CreateLabel(bar.Interval.Length.ToString("F3"), index, 4);
+                    var FiLabel = CreateLabel(bar.F.ToString("F3"), index, 5);
+
+                    HistogramGrid.RowDefinitions.Add(new RowDefinition()); 
+
+                    HistogramGrid.Children.Add(indexLabel);
+                    HistogramGrid.Children.Add(AiLabel);
+                    HistogramGrid.Children.Add(BiLabel);
+                    HistogramGrid.Children.Add(ViLabel);
+                    HistogramGrid.Children.Add(HiLabel);
+                    HistogramGrid.Children.Add(FiLabel);
+
+                    index++;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Выбрано неверное кол-во интервалов.");
+            }
+        }
+
+        private void DisplayPolygonPointsTable()
+        {
+            PolygonGrid.ColumnDefinitions.Clear();
+            PolygonGrid.Children.Clear();
+
+            PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            PolygonGrid.Children.Add(CreateLabel("X"));
+            PolygonGrid.Children.Add(CreateLabel("Y", 1));
+
+            var bars = _histogram.EqualIntervalHistogram().ToList();
+
+            var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
+
+            var column = 1;
+            foreach (var point in polygonPts)
+            {
+                PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+                var xLabel = CreateLabel(point.X.ToString("F3"), 0, column);
+                var yLabel = CreateLabel(point.Y.ToString("F3"), 1, column);
+                
+                PolygonGrid.Children.Add(xLabel);
+                PolygonGrid.Children.Add(yLabel);
+
+                column++;
+            }
+        }
         private void DisplayBar(C1Chart chart, DoubleHistogram.Bar bar)
         {
             var uiElement = CreateBar(bar.Interval.Left, bar.Interval.Right, bar.F);
