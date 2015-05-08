@@ -138,19 +138,24 @@
                                 </StackPanel>
                             </Grid>
                         </Expander>
+                        <Expander Header="Теоретически найденная ф-ия распределения">
+                            <c1:C1Chart Name="RndStatChart" HorizontalAlignment="Left" Width="700"
+                                    Height="650" />
+                        </Expander>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Пункт 3">
+                <ScrollViewer>
                 <StackPanel>
                     <Expander Header="Описание задания">
                         <TextBox TextWrapping="Wrap" IsReadOnly="True">
                             Найти теоретически функцию распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
                         </TextBox>
                     </Expander>
-                    <Expander Header="Теоретически найденная ф-ия распределения (аналитическое представление)">
+                    <Expander Header="Теоретически найденная плотность распределения (аналитическое представление)">
                         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                            <Grid x:Name="AnalyticsFunctionGrid" ShowGridLines="True"
+                            <Grid x:Name="AnalyticsDensityFunctionGrid" ShowGridLines="True"
                                   Style="{StaticResource ResourceKey=ItemStyle}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -159,16 +164,17 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Content="Значение" />
-                                <Label Grid.Column="0" Grid.Row="1" Content="Кол-во" />
+                                <Label Grid.Column="0" Content="X" />
+                                <Label Grid.Column="0" Grid.Row="1" Content="Y" />
                             </Grid>
                         </ScrollViewer>
                     </Expander>
                     <Expander Header="Теоретически найденная ф-ия распределения">
-                        <c1:C1Chart Name="TeoreticalStatFunctionChart" HorizontalAlignment="Left" Width="700"
+                        <c1:C1Chart Name="DensityFunctionChart" HorizontalAlignment="Left" Width="700"
                                     Height="650" />
                     </Expander>
                 </StackPanel>
+                </ScrollViewer>
             </TabItem>
             <TabItem Header="Пункт 4">
                 <StackPanel>
@@ -179,7 +185,6 @@
                     </Expander>
                     <Expander Header="Теоретическая и эмпирическая функции распределения">
                         <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650">
-                            <c1:C1ChartLegend />
                         </c1:C1Chart>
                     </Expander>
                 </StackPanel>

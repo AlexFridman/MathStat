@@ -29,13 +29,13 @@ namespace RoutineCalculation_2
             }
         };
 
-        private readonly PiecewiseFunction<double> _teoreticalFunc = new PiecewiseFunction<double>
+        private readonly PiecewiseFunction<double> _teoreticalDensityFunc = new PiecewiseFunction<double>
         {
             Functions = new Dictionary<Interval<double>, Func<double, double>>
             {
                 {new DoubleInterval(double.NegativeInfinity, 1d/13), x => 0},
-                {new DoubleInterval(1d/13, 1d/3, true, true), x => -1d/10/x + 1.3},
-                {new DoubleInterval(1d/3, double.PositiveInfinity), x => 1}
+                {new DoubleInterval(1d/13, 1d/3, true, true), x => 1d/(10*x*x)},
+                {new DoubleInterval(1d/3, double.PositiveInfinity), x => 0}
             }
         };
 
@@ -47,6 +47,8 @@ namespace RoutineCalculation_2
         private int _n;
         private double _a;
         private double _b;
+        private List<Point> _teoreticalDensityFunctionPoints;
+        
 
         public MainWindow()
         {
@@ -65,6 +67,11 @@ namespace RoutineCalculation_2
             DisplayPolygon();
             DisplayHistogramTable();
             DisplayPolygonPointsTable();
+            //BuildGroupStatFunc();
+            BuildTeoreticalDensityFunction();
+            DisplayTeorDensFunction();
+            DisplayCompareChart();
+            DisplayTeorDensFuncPoints();
         }
 
         #region reoutine_calc_1
@@ -129,7 +136,7 @@ namespace RoutineCalculation_2
         private void BuildTeoreticalFunction()
         {
             var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
-            var yValues = xValues.Select(x => _teoreticalFunc.Calculate(x));
+            var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
@@ -164,18 +171,25 @@ namespace RoutineCalculation_2
 
         private void DisplayPolygon()
         {
-            var bars = _histogram.EqualIntervalHistogram().ToList();
-
-            var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
-
-            RndHistogram.Data.Children.Add(new XYDataSeries
+            try
             {
-                ItemsSource = new ObservableCollection<Point>(polygonPts),
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line,
-                Name = "Polygon"
-            });
+                var bars = _histogram.EqualIntervalHistogram().ToList();
+
+                var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
+
+                RndHistogram.Data.Children.Add(new XYDataSeries
+                {
+                    ItemsSource = new ObservableCollection<Point>(polygonPts),
+                    XValueBinding = new Binding("X"),
+                    ValueBinding = new Binding("Y"),
+                    ChartType = ChartType.Line,
+                    Name = "Polygon"
+                });
+            }
+            catch
+            {
+                //MessageBox.Show("Выбрано неверное кол-во интервалов.");
+            }
         }
 
         private void SetAxis(C1Chart chart, IEnumerable<DoubleHistogram.Bar> bars)
@@ -252,35 +266,146 @@ namespace RoutineCalculation_2
             }
             catch
             {
-                MessageBox.Show("Выбрано неверное кол-во интервалов.");
+               // MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
 
         private void DisplayPolygonPointsTable()
         {
-            PolygonGrid.ColumnDefinitions.Clear();
-            PolygonGrid.Children.Clear();
+            try
+            {
+                PolygonGrid.ColumnDefinitions.Clear();
+                PolygonGrid.Children.Clear();
 
-            PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            PolygonGrid.Children.Add(CreateLabel("X"));
-            PolygonGrid.Children.Add(CreateLabel("Y", 1));
+                PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                PolygonGrid.Children.Add(CreateLabel("X"));
+                PolygonGrid.Children.Add(CreateLabel("Y", 1));
 
-            var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualIntervalHistogram().ToList();
 
-            var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
+                var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
+
+                var column = 1;
+                foreach (var point in polygonPts)
+                {
+                    PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+                    var xLabel = CreateLabel(point.X.ToString("F3"), 0, column);
+                    var yLabel = CreateLabel(point.Y.ToString("F3"), 1, column);
+
+                    PolygonGrid.Children.Add(xLabel);
+                    PolygonGrid.Children.Add(yLabel);
+
+                    column++;
+                }
+            }
+            catch
+            {
+              //  MessageBox.Show("Выбрано неверное кол-во интервалов.");
+            }
+        }
+
+        //private IEnumerable<Tuple<DoubleInterval, double>> _groupStatFunction;
+
+        //private void BuildGroupStatFunc()
+        //{
+        //    var bars = _histogram.EqualIntervalHistogram();
+        //    var functionValues = new List<Tuple<DoubleInterval, double>>();
+                        
+        //    double currentCount = 0;
+        //    foreach (DoubleHistogram.Bar bar in bars)
+        //    {
+        //        currentCount += bar.ValuesCount;
+        //        var interval = new DoubleInterval(0, bar.Interval.Right, true, true);
+
+        //        functionValues.Add(new Tuple<DoubleInterval, double>(interval, currentCount/_n));
+        //    }
+
+        //    _groupStatFunction = functionValues;
+
+        //}
+        #region Density function
+        private void BuildTeoreticalDensityFunction()
+        {
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
+            var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
+
+            var points =
+                xValues.Zip(yValues,
+                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
+                    .ToList();
+
+            _teoreticalDensityFunctionPoints = points;
+        }
+
+        private void DisplayTeorDensFuncPoints()
+        {
+            AnalyticsDensityFunctionGrid.ColumnDefinitions.Clear();
+            AnalyticsDensityFunctionGrid.Children.Clear();
+
+            AnalyticsDensityFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            AnalyticsDensityFunctionGrid.Children.Add(CreateLabel("X"));
+            AnalyticsDensityFunctionGrid.Children.Add(CreateLabel("Y", 1));
 
             var column = 1;
-            foreach (var point in polygonPts)
+            foreach (var point in _teoreticalFunctionPoints.Where(p => p.Y != 0))
             {
-                PolygonGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                AnalyticsDensityFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
-                var xLabel = CreateLabel(point.X.ToString("F3"), 0, column);
-                var yLabel = CreateLabel(point.Y.ToString("F3"), 1, column);
-                
-                PolygonGrid.Children.Add(xLabel);
-                PolygonGrid.Children.Add(yLabel);
+                var valueLabel = CreateLabel(point.X.ToString(CultureInfo.InvariantCulture), 0, column);
+                var countLabel = CreateLabel(point.Y.ToString(CultureInfo.InvariantCulture), 1, column);
+
+                AnalyticsDensityFunctionGrid.Children.Add(valueLabel);
+                AnalyticsDensityFunctionGrid.Children.Add(countLabel);
 
                 column++;
+            }
+        }
+
+        private void DisplayTeorDensFunction()
+        {
+            var points = new ObservableCollection<Point>(_teoreticalDensityFunctionPoints);
+
+            DensityFunctionChart.View.AxisX.Min = 0;
+            DensityFunctionChart.View.AxisX.Max = 1;
+
+            DensityFunctionChart.Data.Children.Clear();
+            DensityFunctionChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = points,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line
+            });
+        }
+        #endregion
+
+        private void DisplayCompareChart()
+        {
+            var points = new ObservableCollection<Point>(_teoreticalDensityFunctionPoints);
+
+            CompareChart.View.AxisX.Min = 0;
+            CompareChart.View.AxisX.Max = 1;
+
+            CompareChart.Data.Children.Clear();
+            CompareChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = points,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line
+            });
+            try
+            {
+                //ClearChart(CompareChart);
+
+                var bars = _histogram.EqualIntervalHistogram().ToList();
+                SetAxis(CompareChart, bars);
+                DisplayHistogramChart(CompareChart, bars);
+            }
+            catch
+            {
+                //MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
         private void DisplayBar(C1Chart chart, DoubleHistogram.Bar bar)
