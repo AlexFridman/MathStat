@@ -7,12 +7,12 @@ namespace BaseTypes
 {
     public class DoubleHistogram
     {
-        public class Step
+        public class Bar
         {
             private readonly int _overalValuesCount;
             private double _valuesCount;
 
-            public Step(int overalValuesCount)
+            public Bar(int overalValuesCount)
             {
                 _overalValuesCount = overalValuesCount;
             }
@@ -51,13 +51,13 @@ namespace BaseTypes
             _varitionalSeriesLength = _orederdVariationalSeries.Count;
         }
 
-        public IEnumerable<Step> EqualIntervalHistogram()
+        public IEnumerable<Bar> EqualIntervalHistogram()
         {
-            var intervalCount = DefineIntervalCount(_varitionalSeriesLength); // M
+            var intervalCount = DefineBarCount(_varitionalSeriesLength); // M
 
             var intervals = BuildEqualIntervals(_minValue, _maxValue, intervalCount);
             var histogramSteps =
-                intervals.Select(i => new Step(_varitionalSeriesLength) {Interval = i, ValuesCount = 0}).ToList();
+                intervals.Select(i => new Bar(_varitionalSeriesLength) {Interval = i, ValuesCount = 0}).ToList();
 
             for (var i = 0; i < _varitionalSeriesLength; i++)
             {
@@ -85,11 +85,11 @@ namespace BaseTypes
             return histogramSteps;
         }
 
-        private int DefineIntervalCount(int seriesLength)
+        private int DefineBarCount(int seriesLength)
         {
             int intervalCount; // M
 
-            if (_varitionalSeriesLength <= 100)
+            if (_varitionalSeriesLength <= 10000)
             {
                 intervalCount = (int) Math.Sqrt(_varitionalSeriesLength);
             }
@@ -121,7 +121,7 @@ namespace BaseTypes
             return intervals;
         }
 
-        public IEnumerable<Step> EqualProbabilityHistogram(int intervalCount)
+        public IEnumerable<Bar> EqualProbabilityHistogram(int intervalCount)
         {
             if (intervalCount < 1)
             {
@@ -133,7 +133,7 @@ namespace BaseTypes
             }
 
             var valuesPerInterval = _varitionalSeriesLength/intervalCount; // h
-            var steps = new List<Step>(intervalCount);
+            var steps = new List<Bar>(intervalCount);
             double tempLeft = _orederdVariationalSeries.First();
             double tempRight = (_orederdVariationalSeries.Skip(valuesPerInterval).First() +
                                 _orederdVariationalSeries.Take(valuesPerInterval).Last()
@@ -141,7 +141,7 @@ namespace BaseTypes
 
             for (var i = 0; i < intervalCount; i++)
             {
-                var step = new Step(_varitionalSeriesLength)
+                var step = new Bar(_varitionalSeriesLength)
                 {
                     Interval = new DoubleInterval(tempLeft, tempRight),
                     ValuesCount = valuesPerInterval
@@ -169,6 +169,13 @@ namespace BaseTypes
         private bool IsCorrectIntervalCountForEqualProbabilityHistogram(int seriesLength, int intervalCount)
         {
             return seriesLength%intervalCount == 0;
+        }
+
+        public IEnumerable<Point<double>> BuildPolygon(IEnumerable<Bar> bars)
+        {
+            var sortedBars = bars.OrderBy(b => b.Interval.Middle).ToList();
+
+            return sortedBars.Select(b => new Point<double>(b.Interval.Middle, b.F));
         }
     }
 }

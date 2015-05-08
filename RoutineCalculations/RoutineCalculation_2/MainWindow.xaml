@@ -1,0 +1,146 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
+    x:Class="RoutineCalculation_2.MainWindow"
+    Title="Задание 1" MinHeight="350" Width="950" SizeToContent="Height">
+    <Window.Resources>
+        <Style x:Key="ItemStyle">
+            <Setter Property="FrameworkElement.Margin" Value="5" />
+            <Setter Property="Control.Padding" Value="5" />
+            <Setter Property="Control.HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Control.VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+    <Grid Style="{StaticResource ResourceKey=ItemStyle}">
+        <TabControl>
+            <TabItem Header="Пункт 1">
+                <StackPanel>
+                    <Expander Header="Описание задания" Grid.RowSpan="2">
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Сформировать выборку случайных величин Yi=φ(xi), где Xi – равномерно распределенное число из интервала [a,b], I = 1, …, n.
+                            Величина n задается.
+                        </TextBox>
+                    </Expander>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="Функция (по параметру 'x') Y="
+                               Style="{StaticResource ResourceKey=ItemStyle}" />
+
+                        <Label Name="funcTextBox" Grid.Row="0" Grid.Column="1" Content="1/(x+3)"
+
+                               Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                               Style="{StaticResource ResourceKey=ItemStyle}"
+                               Content="Интервал распределения (a &lt; b)" />
+                        <Label Grid.Row="2" Grid.Column="0" Content="a" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Name="aTextBox" Grid.Row="2" Grid.Column="1"
+                               Style="{StaticResource ResourceKey=ItemStyle}">
+                            0
+
+                        </Label>
+                        <Label Grid.Row="3" Grid.Column="0" Content="b" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Label Name="bTextBox" Grid.Row="3" Grid.Column="1"
+                               Style="{StaticResource ResourceKey=ItemStyle}">
+                            10
+
+                        </Label>
+
+                        <Label Grid.Row="5" Grid.Column="0" Content="n" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100"
+                                 Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
+                                Style="{StaticResource ResourceKey=ItemStyle}"
+                                Click="StartButton_OnClick" Content="Выполнить расчёт и построение" IsDefault="True"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Пункт 2">
+                <StackPanel>
+                    <Expander Header="Описание задания">
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Для полученной СВ построить вариационный ряд, эмпирическую функцию распределения СВ Y.
+                            Результаты представить в виде таблицы и графика.
+                        </TextBox>
+                    </Expander>
+                    <Expander Header="Вариационный ряд">
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                            <Grid x:Name="VariationalSeriesGrid" ShowGridLines="True"
+                                  Style="{StaticResource ResourceKey=ItemStyle}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Значение" />
+                                <Label Grid.Column="0" Grid.Row="1" Content="Кол-во" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Expander>
+                    <Expander Header="Эмпирическая функция распределения">
+                        <c1:C1Chart Name="RndHistogram" HorizontalAlignment="Left" Height="700" Width="700" >
+                           
+                        </c1:C1Chart>
+                    </Expander>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Пункт 3">
+                <StackPanel>
+                    <Expander Header="Описание задания">
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Найти теоретически функцию распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
+                        </TextBox>
+                    </Expander>
+                    <Expander Header="Теоретически найденная ф-ия распределения (аналитическое представление)">
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                            <Grid x:Name="AnalyticsFunctionGrid" ShowGridLines="True"
+                                  Style="{StaticResource ResourceKey=ItemStyle}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Значение" />
+                                <Label Grid.Column="0" Grid.Row="1" Content="Кол-во" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Expander>
+                    <Expander Header="Теоретически найденная ф-ия распределения">
+                        <c1:C1Chart Name="TeoreticalStatFunctionChart" HorizontalAlignment="Left" Width="700"
+                                    Height="650" />
+                    </Expander>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Пункт 4">
+                <StackPanel>
+                    <Expander Header="Описание задания">
+                        <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                            Сравнить полученные результаты, представив графики теоретической и эмпирической функций распределения в одном окне.
+                        </TextBox>
+                    </Expander>
+                    <Expander Header="Теоретическая и эмпирическая функции распределения">
+                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650">
+                            <c1:C1ChartLegend />
+                        </c1:C1Chart>
+                    </Expander>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
