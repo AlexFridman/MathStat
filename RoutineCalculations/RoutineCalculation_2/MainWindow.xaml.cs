@@ -310,20 +310,24 @@ namespace RoutineCalculation_2
 
         private void DisplayGroupStatFunc()
         {
-            var bars = _histogram.EqualIntervalHistogram();
-            var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
-
-            var functionPoints = groupDistFunc.Function;
-
-            ClearChart(GroupDistChsrt);
-
-            GroupDistChsrt.Data.Children.Add(new XYDataSeries
+            try
             {
-                ItemsSource = functionPoints,
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line
-            });
+                var bars = _histogram.EqualIntervalHistogram();
+                var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
+
+                var functionPoints = groupDistFunc.Function;
+
+                ClearChart(GroupDistChsrt);
+
+                GroupDistChsrt.Data.Children.Add(new XYDataSeries
+                {
+                    ItemsSource = functionPoints,
+                    XValueBinding = new Binding("X"),
+                    ValueBinding = new Binding("Y"),
+                    ChartType = ChartType.Step
+                });
+            }
+            catch { }
 
         }
         #region Density function

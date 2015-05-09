@@ -333,7 +333,7 @@ namespace RoutineCalculation_2
                     ItemsSource = functionPoints,
                     XValueBinding = new Binding("X"),
                     ValueBinding = new Binding("Y"),
-                    ChartType = ChartType.Line
+                    ChartType = ChartType.Step
                 });
             }
             catch

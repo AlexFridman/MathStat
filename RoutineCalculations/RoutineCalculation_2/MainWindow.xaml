@@ -139,7 +139,7 @@
                                 </StackPanel>
                             </Grid>
                         </Expander>
-                        <Expander Header="Теоретически найденная ф-ия распределения">
+                        <Expander Header="Э.Ф.Р. по сгруппированным данным">
                             <c1:C1Chart Name="GroupDistChsrt" HorizontalAlignment="Left" Width="700"
                                     Height="650" />
                         </Expander>
