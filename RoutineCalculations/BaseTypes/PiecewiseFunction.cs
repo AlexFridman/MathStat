@@ -19,7 +19,6 @@ namespace BaseTypes
             try
             {
                 var function = Functions.First(f => f.Key.Contains(value));
-                var t = function.Value(value);
                 return function.Value(value);
             }
             catch (InvalidOperationException)

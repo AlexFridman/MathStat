@@ -1,18 +1,19 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using BaseTypes;
-using BaseTypes.FrequencyFunction;
 using BaseTypes.Interval;
 using C1.WPF.C1Chart;
-using Color = System.Windows.Media.Color;
-using Point = System.Windows.Point;
+using Bar = BaseTypes.Bar;
+
+#endregion
 
 namespace RoutineCalculation_2
 {
@@ -39,16 +40,16 @@ namespace RoutineCalculation_2
             }
         };
 
-        private DoubleFrequencyFunction _frequencyFunctionPoints;
         private IEnumerable<Point> _teoreticalFunctionPoints;
         private DoubleHistogram _histogram;
-        protected double[] _rndVariationalSeries;
+        private double[] _rndVariationalSeries;
         private int _M;
         private int _n;
         private double _a;
         private double _b;
         private List<Point> _teoreticalDensityFunctionPoints;
-        
+        private Bar[] _equalProbabilityHistogramBars;
+
 
         public MainWindow2()
         {
@@ -59,7 +60,6 @@ namespace RoutineCalculation_2
         {
             if (!TryParseParameters()) return;
 
-            BuildRndFrequencyFunction();
             BuildTeoreticalFunction();
             BuildRndVariationalSeries();
             InitializeRndHistogram();
@@ -125,32 +125,21 @@ namespace RoutineCalculation_2
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 6)).ToList();
+                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
+            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 6)).ToList();
 
             _rndVariationalSeries = roundedValues.ToArray();
-        }
-
-        private void BuildRndFrequencyFunction()
-        {
-            var rnd = new Random();
-
-            var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 6)).ToList();
-
-            _frequencyFunctionPoints = new DoubleFrequencyFunction(roundedValues);
         }
 
 
         private void BuildTeoreticalFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
-                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
+                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
                     .ToList();
 
             _teoreticalFunctionPoints = points;
@@ -161,6 +150,8 @@ namespace RoutineCalculation_2
         private void InitializeRndHistogram()
         {
             _histogram = new DoubleHistogram(_rndVariationalSeries);
+
+            _equalProbabilityHistogramBars = _histogram.EqualProbabilityHistogram(_M).ToArray();
         }
 
         private void DisplayEqualProbabilityHistogram()
@@ -169,7 +160,7 @@ namespace RoutineCalculation_2
             {
                 ClearChart(RndHistogram);
 
-                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
+                var bars = _equalProbabilityHistogramBars;
                 SetAxis(RndHistogram, bars);
                 DisplayHistogramChart(RndHistogram, bars);
             }
@@ -183,7 +174,7 @@ namespace RoutineCalculation_2
         {
             try
             {
-                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
+                var bars = _equalProbabilityHistogramBars;
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -202,7 +193,7 @@ namespace RoutineCalculation_2
             }
         }
 
-        private void SetAxis(C1Chart chart, IEnumerable<BaseTypes.Bar> bars)
+        private void SetAxis(C1Chart chart, IEnumerable<Bar> bars)
         {
             var minX = bars.Min(b => b.Interval.Left);
             var maxX = bars.Max(b => b.Interval.Right);
@@ -211,7 +202,7 @@ namespace RoutineCalculation_2
 
             chart.View.AxisX.Min = minX - 0.1;
             chart.View.AxisX.Max = maxX + 0.1;
-            chart.View.AxisY.Min = 0;
+            chart.View.AxisY.Min = minY;
             chart.View.AxisY.Max = maxY + 1;
         }
 
@@ -220,7 +211,7 @@ namespace RoutineCalculation_2
             chart.Data.Children.Clear();
         }
 
-        private void DisplayHistogramChart(C1Chart chart, IEnumerable<BaseTypes.Bar> bars)
+        private void DisplayHistogramChart(C1Chart chart, IEnumerable<Bar> bars)
         {
             foreach (var bar in bars)
             {
@@ -233,50 +224,50 @@ namespace RoutineCalculation_2
             try
             {
                 HistogramGrid.Children.Clear();
-                HistogramGrid.RowDefinitions.Clear();                      
-      
+                HistogramGrid.RowDefinitions.Clear();
+
                 var indexHeadeLabel = CreateLabel("i", 0);
-                var AiHeaderLabel = CreateLabel("A(i)",0, 1);
-                var BiHeaderLabel = CreateLabel("B(i)",0, 2);
-                var ViHeaderLabel = CreateLabel("v(i)",0, 3);
-                var HiHeaderLabel = CreateLabel("h(i)",0, 4);
-                var FiHeaderLabel = CreateLabel("f*(i)", 0, 5);
+                var aiHeaderLabel = CreateLabel("A(i)", 0, 1);
+                var biHeaderLabel = CreateLabel("B(i)", 0, 2);
+                var viHeaderLabel = CreateLabel("v(i)", 0, 3);
+                var hiHeaderLabel = CreateLabel("h(i)", 0, 4);
+                var fiHeaderLabel = CreateLabel("f*(i)", 0, 5);
 
                 HistogramGrid.RowDefinitions.Add(new RowDefinition());
                 HistogramGrid.Children.Add(indexHeadeLabel);
-                HistogramGrid.Children.Add(AiHeaderLabel);
-                HistogramGrid.Children.Add(BiHeaderLabel);
-                HistogramGrid.Children.Add(ViHeaderLabel);
-                HistogramGrid.Children.Add(HiHeaderLabel);
-                HistogramGrid.Children.Add(FiHeaderLabel);
+                HistogramGrid.Children.Add(aiHeaderLabel);
+                HistogramGrid.Children.Add(biHeaderLabel);
+                HistogramGrid.Children.Add(viHeaderLabel);
+                HistogramGrid.Children.Add(hiHeaderLabel);
+                HistogramGrid.Children.Add(fiHeaderLabel);
 
-                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
+                var bars = _equalProbabilityHistogramBars;
 
-                int index = 1;
-                foreach (BaseTypes.Bar bar in bars)
+                var index = 1;
+                foreach (var bar in bars)
                 {
                     var indexLabel = CreateLabel(index.ToString(), index);
-                    var AiLabel = CreateLabel(bar.Interval.Left.ToString("F3"), index, 1);
-                    var BiLabel = CreateLabel(bar.Interval.Right.ToString("F3"), index, 2);
-                    var ViLabel = CreateLabel(bar.ValuesCount.ToString("F3"), index, 3);
-                    var HiLabel = CreateLabel(bar.Interval.Length.ToString("F3"), index, 4);
-                    var FiLabel = CreateLabel(bar.F.ToString("F3"), index, 5);
+                    var aiLabel = CreateLabel(bar.Interval.Left.ToString("F3"), index, 1);
+                    var biLabel = CreateLabel(bar.Interval.Right.ToString("F3"), index, 2);
+                    var viLabel = CreateLabel(bar.ValuesCount.ToString("F3"), index, 3);
+                    var hiLabel = CreateLabel(bar.Interval.Length.ToString("F3"), index, 4);
+                    var fiLabel = CreateLabel(bar.F.ToString("F3"), index, 5);
 
-                    HistogramGrid.RowDefinitions.Add(new RowDefinition()); 
+                    HistogramGrid.RowDefinitions.Add(new RowDefinition());
 
                     HistogramGrid.Children.Add(indexLabel);
-                    HistogramGrid.Children.Add(AiLabel);
-                    HistogramGrid.Children.Add(BiLabel);
-                    HistogramGrid.Children.Add(ViLabel);
-                    HistogramGrid.Children.Add(HiLabel);
-                    HistogramGrid.Children.Add(FiLabel);
+                    HistogramGrid.Children.Add(aiLabel);
+                    HistogramGrid.Children.Add(biLabel);
+                    HistogramGrid.Children.Add(viLabel);
+                    HistogramGrid.Children.Add(hiLabel);
+                    HistogramGrid.Children.Add(fiLabel);
 
                     index++;
                 }
             }
             catch
             {
-               // MessageBox.Show("Выбрано неверное кол-во интервалов.");
+                // MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
 
@@ -291,7 +282,7 @@ namespace RoutineCalculation_2
                 PolygonGrid.Children.Add(CreateLabel("X"));
                 PolygonGrid.Children.Add(CreateLabel("Y", 1));
 
-                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
+                var bars = _equalProbabilityHistogramBars;
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -311,10 +302,9 @@ namespace RoutineCalculation_2
             }
             catch
             {
-              //  MessageBox.Show("Выбрано неверное кол-во интервалов.");
+                //  MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
-
 
 
         private void DisplayGroupStatFunc()
@@ -338,19 +328,20 @@ namespace RoutineCalculation_2
             }
             catch
             {
-                
+                // ignored
             }
-
         }
+
         #region Density function
+
         private void BuildTeoreticalDensityFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
-                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
+                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
                     .ToList();
 
             _teoreticalDensityFunctionPoints = points;
@@ -396,6 +387,7 @@ namespace RoutineCalculation_2
                 ChartType = ChartType.Line
             });
         }
+
         #endregion
 
         private void DisplayCompareChart()
@@ -417,7 +409,7 @@ namespace RoutineCalculation_2
             {
                 //ClearChart(CompareChart);
 
-                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
+                var bars = _equalProbabilityHistogramBars;
                 SetAxis(CompareChart, bars);
                 DisplayHistogramChart(CompareChart, bars);
             }
@@ -426,7 +418,8 @@ namespace RoutineCalculation_2
                 //MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
-        private void DisplayBar(C1Chart chart, BaseTypes.Bar bar)
+
+        private void DisplayBar(C1Chart chart, Bar bar)
         {
             var uiElement = CreateBar(bar.Interval.Left, bar.Interval.Right, bar.F);
 
@@ -504,13 +497,14 @@ namespace RoutineCalculation_2
                 polygon.Visibility = Visibility.Hidden;
             }
         }
+
         private void ChangeTaskButton_OnClick(object sender, RoutedEventArgs e)
         {
             var w2 = new MainWindow();
-            w2.Top = this.Top;
-            w2.Left = this.Left;
+            w2.Top = Top;
+            w2.Left = Left;
             w2.Show();
-            this.Close();
+            Close();
         }
     }
 }

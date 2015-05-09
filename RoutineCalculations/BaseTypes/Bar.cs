@@ -7,9 +7,10 @@ namespace BaseTypes
         private readonly int _overalValuesCount;
         private double _valuesCount;
 
-        public Bar(int overalValuesCount)
+        public Bar(int overalValuesCount, DoubleInterval interval = null)
         {
             _overalValuesCount = overalValuesCount;
+            Interval = interval;
         }
 
         public DoubleInterval Interval { get; set; }

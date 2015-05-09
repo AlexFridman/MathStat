@@ -47,7 +47,7 @@ namespace BaseTypes
         }
 
         public void Dispose()
-        {
+        {            
         }
 
         public bool MoveNext()
