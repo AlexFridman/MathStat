@@ -488,5 +488,14 @@ namespace RoutineCalculation_2
                 polygon.Visibility = Visibility.Hidden;
             }
         }
+
+        private void ChangeTaskButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var w2 = new MainWindow2();
+            w2.Top = this.Top;
+            w2.Left = this.Left;
+            w2.Show();
+            this.Close();
+        }
     }
 }
