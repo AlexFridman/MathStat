@@ -192,7 +192,7 @@ namespace RoutineCalculation_2
             }
         }
 
-        private void SetAxis(C1Chart chart, IEnumerable<DoubleHistogram.Bar> bars)
+        private void SetAxis(C1Chart chart, IEnumerable<BaseTypes.Bar> bars)
         {
             var minX = bars.Min(b => b.Interval.Left);
             var maxX = bars.Max(b => b.Interval.Right);
@@ -210,7 +210,7 @@ namespace RoutineCalculation_2
             chart.Data.Children.Clear();
         }
 
-        private void DisplayHistogramChart(C1Chart chart, IEnumerable<DoubleHistogram.Bar> bars)
+        private void DisplayHistogramChart(C1Chart chart, IEnumerable<BaseTypes.Bar> bars)
         {
             foreach (var bar in bars)
             {
@@ -243,7 +243,7 @@ namespace RoutineCalculation_2
                 var bars = _histogram.EqualIntervalHistogram().ToList();
 
                 int index = 1;
-                foreach (DoubleHistogram.Bar bar in bars)
+                foreach (BaseTypes.Bar bar in bars)
                 {
                     var indexLabel = CreateLabel(index.ToString(), index);
                     var AiLabel = CreateLabel(bar.Interval.Left.ToString("F3"), index, 1);
@@ -408,7 +408,7 @@ namespace RoutineCalculation_2
                 //MessageBox.Show("Выбрано неверное кол-во интервалов.");
             }
         }
-        private void DisplayBar(C1Chart chart, DoubleHistogram.Bar bar)
+        private void DisplayBar(C1Chart chart, BaseTypes.Bar bar)
         {
             var uiElement = CreateBar(bar.Interval.Left, bar.Interval.Right, bar.F);
 
