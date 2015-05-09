@@ -72,6 +72,7 @@ namespace RoutineCalculation_2
             DisplayTeorDensFunction();
             DisplayCompareChart();
             DisplayTeorDensFuncPoints();
+            DisplayGroupStatFunc();
         }
 
         #region reoutine_calc_1
@@ -305,25 +306,26 @@ namespace RoutineCalculation_2
             }
         }
 
-        //private IEnumerable<Tuple<DoubleInterval, double>> _groupStatFunction;
 
-        //private void BuildGroupStatFunc()
-        //{
-        //    var bars = _histogram.EqualIntervalHistogram();
-        //    var functionValues = new List<Tuple<DoubleInterval, double>>();
-                        
-        //    double currentCount = 0;
-        //    foreach (DoubleHistogram.Bar bar in bars)
-        //    {
-        //        currentCount += bar.ValuesCount;
-        //        var interval = new DoubleInterval(0, bar.Interval.Right, true, true);
 
-        //        functionValues.Add(new Tuple<DoubleInterval, double>(interval, currentCount/_n));
-        //    }
+        private void DisplayGroupStatFunc()
+        {
+            var bars = _histogram.EqualIntervalHistogram();
+            var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
 
-        //    _groupStatFunction = functionValues;
+            var functionPoints = groupDistFunc.Function;
 
-        //}
+            ClearChart(GroupDistChsrt);
+
+            GroupDistChsrt.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = functionPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line
+            });
+
+        }
         #region Density function
         private void BuildTeoreticalDensityFunction()
         {
