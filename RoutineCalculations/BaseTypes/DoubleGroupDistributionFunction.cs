@@ -22,6 +22,7 @@ namespace BaseTypes
             }
 
             _totalValuesCount = totalValuesCount;
+            _groupedStatisticalSeries = groupedStatisticalSeries;
             BuildFunction();
         }
 
