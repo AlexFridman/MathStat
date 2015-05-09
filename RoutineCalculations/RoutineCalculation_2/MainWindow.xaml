@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
     x:Class="RoutineCalculation_2.MainWindow"
-    Title="Задание 1" MinHeight="350" Width="950" SizeToContent="Manual">
+    Title="Задание 2.1" MinHeight="350" Width="950" SizeToContent="Manual">
     <Window.Resources>
         <Style x:Key="ItemStyle">
             <Setter Property="FrameworkElement.Margin" Value="5" />
@@ -14,12 +14,11 @@
     </Window.Resources>
     <Grid Style="{StaticResource ResourceKey=ItemStyle}">
         <TabControl>
-            <TabItem Header="Пункт 1">
+            <TabItem Header="Параметры">
                 <StackPanel>
                     <Expander Header="Описание задания" Grid.RowSpan="2">
                         <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                            Сформировать выборку случайных величин Yi=φ(xi), где Xi – равномерно распределенное число из интервала [a,b], I = 1, …, n.
-                            Величина n задается.
+                            построить гистограмму равноинтервальным методом, полигон распределения и эмпирическую функцию распределения по сгруппированным данным. Результаты представить в виде таблицы и графика.
                         </TextBox>
                     </Expander>
                     <Grid>
@@ -67,12 +66,12 @@
                     </Grid>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Пункт 2">
+            <TabItem Header="Пункт 1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <Expander Header="Описание задания">
                             <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                Гистограмма (равноинт.), полигон, эмпирич. ф-я по сгрупп. данным
+                                Найти теоретически плотность распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
                             </TextBox>
                         </Expander>
                         <Expander Header="Гистограмма (таблица)" MaxHeight="200">
@@ -145,13 +144,13 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Пункт 3">
+            <TabItem Header="Пункт 2">
                 <ScrollViewer>
                 <StackPanel>
                     <Expander Header="Описание задания">
                         <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                            Найти теоретически функцию распределения СВ Y.  Результаты представить в аналитическом виде и в виде графика.
-                        </TextBox>
+                                3.	Сравнить полученные результаты, представив графики теоретической и эмпирической плотностей распределения в одном окне.
+                            </TextBox>
                     </Expander>
                     <Expander Header="Теоретически найденная плотность распределения (аналитическое представление)">
                         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
@@ -169,21 +168,21 @@
                             </Grid>
                         </ScrollViewer>
                     </Expander>
-                    <Expander Header="Теоретически найденная ф-ия распределения">
+                    <Expander Header="Теоретически найденная плотность распределения">
                         <c1:C1Chart Name="DensityFunctionChart" HorizontalAlignment="Left" Width="700"
                                     Height="650" />
                     </Expander>
                 </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Пункт 4">
+            <TabItem Header="Пункт 3">
                 <StackPanel>
                     <Expander Header="Описание задания">
                         <TextBox TextWrapping="Wrap" IsReadOnly="True">
                             Сравнить полученные результаты, представив графики теоретической и эмпирической функций распределения в одном окне.
                         </TextBox>
                     </Expander>
-                    <Expander Header="Теоретическая и эмпирическая функции распределения">
+                    <Expander Header="Теоретическая и эмпирическая плотности распределения">
                         <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Width="700" Height="650">
                         </c1:C1Chart>
                     </Expander>
