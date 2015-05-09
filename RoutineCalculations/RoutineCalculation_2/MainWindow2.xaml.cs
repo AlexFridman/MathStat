@@ -19,7 +19,7 @@ namespace RoutineCalculation_2
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow2 : Window
     {
         private readonly PiecewiseFunction<double> _function = new PiecewiseFunction<double>
         {
@@ -50,7 +50,7 @@ namespace RoutineCalculation_2
         private List<Point> _teoreticalDensityFunctionPoints;
         
 
-        public MainWindow()
+        public MainWindow2()
         {
             InitializeComponent();
         }
@@ -63,7 +63,7 @@ namespace RoutineCalculation_2
             BuildTeoreticalFunction();
             BuildRndVariationalSeries();
             InitializeRndHistogram();
-            DisplayEqualIntervalsHistogram();
+            DisplayEqualProbabilityHistogram();
             DisplayPolygon();
             DisplayHistogramTable();
             DisplayPolygonPointsTable();
@@ -154,13 +154,13 @@ namespace RoutineCalculation_2
             _histogram = new DoubleHistogram(_rndVariationalSeries);
         }
 
-        private void DisplayEqualIntervalsHistogram()
+        private void DisplayEqualProbabilityHistogram()
         {
             try
             {
                 ClearChart(RndHistogram);
 
-                var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
                 SetAxis(RndHistogram, bars);
                 DisplayHistogramChart(RndHistogram, bars);
             }
@@ -174,7 +174,7 @@ namespace RoutineCalculation_2
         {
             try
             {
-                var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -241,7 +241,7 @@ namespace RoutineCalculation_2
                 HistogramGrid.Children.Add(HiHeaderLabel);
                 HistogramGrid.Children.Add(FiHeaderLabel);
 
-                var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
 
                 int index = 1;
                 foreach (BaseTypes.Bar bar in bars)
@@ -282,7 +282,7 @@ namespace RoutineCalculation_2
                 PolygonGrid.Children.Add(CreateLabel("X"));
                 PolygonGrid.Children.Add(CreateLabel("Y", 1));
 
-                var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -310,7 +310,7 @@ namespace RoutineCalculation_2
 
         private void DisplayGroupStatFunc()
         {
-            var bars = _histogram.EqualIntervalHistogram();
+            var bars = _histogram.EqualProbabilityHistogram(10);
             var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
 
             var functionPoints = groupDistFunc.Function;
@@ -401,7 +401,7 @@ namespace RoutineCalculation_2
             {
                 //ClearChart(CompareChart);
 
-                var bars = _histogram.EqualIntervalHistogram().ToList();
+                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
                 SetAxis(CompareChart, bars);
                 DisplayHistogramChart(CompareChart, bars);
             }
