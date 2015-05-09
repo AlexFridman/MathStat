@@ -43,7 +43,7 @@ namespace RoutineCalculation_2
         private IEnumerable<Point> _teoreticalFunctionPoints;
         private DoubleHistogram _histogram;
         protected double[] _rndVariationalSeries;
-
+        private int _M;
         private int _n;
         private double _a;
         private double _b;
@@ -96,7 +96,16 @@ namespace RoutineCalculation_2
                 MessageBox.Show("Введите число в поле a.");
                 return false;
             }
-
+            if (!int.TryParse(MTextBox.Text, out _M))
+            {
+                MessageBox.Show("Введите число в поле n.");
+                return false;
+            }
+            if (_M < 1 || _M > _n)
+            {
+                MessageBox.Show("M должно быть больше 0, но меньше n");
+                return false;
+            }
             if (!double.TryParse(bTextBox.Content.ToString(), out _b))
             {
                 MessageBox.Show("Введите число в поле a.");
@@ -160,7 +169,7 @@ namespace RoutineCalculation_2
             {
                 ClearChart(RndHistogram);
 
-                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
+                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
                 SetAxis(RndHistogram, bars);
                 DisplayHistogramChart(RndHistogram, bars);
             }
@@ -174,7 +183,7 @@ namespace RoutineCalculation_2
         {
             try
             {
-                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
+                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -241,7 +250,7 @@ namespace RoutineCalculation_2
                 HistogramGrid.Children.Add(HiHeaderLabel);
                 HistogramGrid.Children.Add(FiHeaderLabel);
 
-                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
+                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
 
                 int index = 1;
                 foreach (BaseTypes.Bar bar in bars)
@@ -282,7 +291,7 @@ namespace RoutineCalculation_2
                 PolygonGrid.Children.Add(CreateLabel("X"));
                 PolygonGrid.Children.Add(CreateLabel("Y", 1));
 
-                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
+                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
 
                 var polygonPts = _histogram.BuildPolygon(bars).Select(p => new Point(p.X, p.Y));
 
@@ -310,20 +319,27 @@ namespace RoutineCalculation_2
 
         private void DisplayGroupStatFunc()
         {
-            var bars = _histogram.EqualProbabilityHistogram(10);
-            var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
-
-            var functionPoints = groupDistFunc.Function;
-
-            ClearChart(GroupDistChsrt);
-
-            GroupDistChsrt.Data.Children.Add(new XYDataSeries
+            try
             {
-                ItemsSource = functionPoints,
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line
-            });
+                var bars = _histogram.EqualProbabilityHistogram(_M);
+                var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
+
+                var functionPoints = groupDistFunc.Function;
+
+                ClearChart(GroupDistChsrt);
+
+                GroupDistChsrt.Data.Children.Add(new XYDataSeries
+                {
+                    ItemsSource = functionPoints,
+                    XValueBinding = new Binding("X"),
+                    ValueBinding = new Binding("Y"),
+                    ChartType = ChartType.Line
+                });
+            }
+            catch
+            {
+                
+            }
 
         }
         #region Density function
@@ -401,7 +417,7 @@ namespace RoutineCalculation_2
             {
                 //ClearChart(CompareChart);
 
-                var bars = _histogram.EqualProbabilityHistogram(10).ToList();
+                var bars = _histogram.EqualProbabilityHistogram(_M).ToList();
                 SetAxis(CompareChart, bars);
                 DisplayHistogramChart(CompareChart, bars);
             }

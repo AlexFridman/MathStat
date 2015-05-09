@@ -33,6 +33,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Content="Функция (по параметру 'x') Y="
@@ -60,11 +61,14 @@
                         <Label Grid.Row="5" Grid.Column="0" Content="n" Style="{StaticResource ResourceKey=ItemStyle}" />
                         <TextBox x:Name="nTextBox" Grid.Row="5" Grid.Column="1" Text="100"
                                  Style="{StaticResource ResourceKey=ItemStyle}" />
-                        <Button x:Name="StartButton" Grid.Row="6" Grid.Column="1" VerticalAlignment="Top"
+                        <Label Grid.Row="6" Grid.Column="0" Content="M" Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <TextBox x:Name="MTextBox" Grid.Row="6" Grid.Column="1" Text="10"
+                                 Style="{StaticResource ResourceKey=ItemStyle}" />
+                        <Button x:Name="StartButton" Grid.Row="7" Grid.Column="1" VerticalAlignment="Top"
                                 Style="{StaticResource ResourceKey=ItemStyle}"
                                 Click="StartButton_OnClick" Content="Выполнить расчёт и построение" IsDefault="True" />
                         <Button Name="ChangeTaskButton" VerticalAlignment="Top"
-                                Style="{StaticResource ResourceKey=ItemStyle}"    Grid.Row="6" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 2.1</Button>
+                                Style="{StaticResource ResourceKey=ItemStyle}"    Grid.Row="7" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 2.1</Button>
                     </Grid>
                 </StackPanel>
             </TabItem>
