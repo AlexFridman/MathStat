@@ -105,7 +105,7 @@ namespace BaseTypes
             }
 
             var valuesPerInterval = _varitionalSeriesLength/intervalCount; // h
-            var steps = new List<Bar>(intervalCount);
+            var basrs = new List<Bar>(intervalCount);
             double tempLeft = _orederdVariationalSeries.First();
             double tempRight = (_orederdVariationalSeries.Skip(valuesPerInterval).First() +
                                 _orederdVariationalSeries.Take(valuesPerInterval).Last()
@@ -119,7 +119,7 @@ namespace BaseTypes
                     ValuesCount = valuesPerInterval
                 };
 
-                steps.Add(step);
+                basrs.Add(step);
 
                 tempLeft = tempRight;
 
@@ -135,7 +135,7 @@ namespace BaseTypes
                 
             }
 
-            return steps;
+            return basrs;
         }
 
         private bool IsCorrectIntervalCountForEqualProbabilityHistogram(int seriesLength, int intervalCount)
