@@ -22,7 +22,6 @@ namespace BaseTypes
             }
 
             _totalValuesCount = totalValuesCount;
-            _groupedStatisticalSeries = groupedStatisticalSeries.OrderBy(i => i);
             BuildFunction();
         }
 
