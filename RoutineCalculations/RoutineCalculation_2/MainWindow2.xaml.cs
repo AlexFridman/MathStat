@@ -60,6 +60,21 @@ namespace RoutineCalculation_2
         {
             if (!TryParseParameters()) return;
 
+            bool isWorkDoneSucceed = false;
+
+            while (!isWorkDoneSucceed)
+            {
+                try
+                {
+                    isWorkDoneSucceed = DoWork();
+                }
+                catch { }
+            }
+        }
+
+
+        private bool DoWork()
+        {
             BuildTeoreticalFunction();
             BuildRndVariationalSeries();
             InitializeRndHistogram();
@@ -73,8 +88,8 @@ namespace RoutineCalculation_2
             DisplayCompareChart();
             DisplayTeorDensFuncPoints();
             DisplayGroupStatFunc();
+            return true;
         }
-
         #region reoutine_calc_1
 
         private bool TryParseParameters()

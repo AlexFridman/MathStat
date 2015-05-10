@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -56,7 +57,20 @@ namespace RoutineCalculation_2
         private void StartButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (!TryParseParameters()) return;
+            bool isWorkDoneSucceed = false;
 
+            while (!isWorkDoneSucceed)
+            {
+                try
+                {
+                    isWorkDoneSucceed = DoWork();
+                }
+                catch { }
+            }
+        }
+
+        private bool DoWork()
+        {
             BuildRndFrequencyFunction();
             BuildTeoreticalFunction();
             BuildRndVariationalSeries();
@@ -71,6 +85,7 @@ namespace RoutineCalculation_2
             DisplayCompareChart();
             DisplayTeorDensFuncPoints();
             DisplayGroupStatFunc();
+            return true;
         }
 
         #region reoutine_calc_1
@@ -114,8 +129,8 @@ namespace RoutineCalculation_2
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 6)).ToList();
+                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
+            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 6)).ToList();
 
             _rndVariationalSeries = roundedValues.ToArray();
         }
@@ -125,8 +140,8 @@ namespace RoutineCalculation_2
             var rnd = new Random();
 
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
-                x => _function.Calculate(rnd.NextDouble()*(_b - _a) + _a));
-            var roundedValues = rndValues.Select(v => (double) Math.Round((decimal) v, 6)).ToList();
+                x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
+            var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 6)).ToList();
 
             new DoubleFrequencyFunction(roundedValues);
         }
@@ -134,12 +149,12 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
-                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
+                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
                     .ToList();
 
             _teoreticalFunctionPoints = points;
@@ -336,12 +351,12 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalDensityFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
                 xValues.Zip(yValues,
-                    (x, y) => new Point((double) Math.Round((decimal) x, 5), (double) Math.Round((decimal) y, 5)))
+                    (x, y) => new Point((double)Math.Round((decimal)x, 5), (double)Math.Round((decimal)y, 5)))
                     .ToList();
 
             _teoreticalDensityFunctionPoints = points;
