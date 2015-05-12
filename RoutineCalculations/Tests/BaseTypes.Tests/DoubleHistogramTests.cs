@@ -55,7 +55,7 @@ namespace Tests.BaseTypes.Tests
             var histogram = new DoubleHistogram(series);
 
             // Act
-            var steps = histogram.EqualProbabilityHistogram(10).ToList();
+            var steps = histogram.EqualProbabilityHistogram().ToList();
 
             // Assert
             Assert.AreEqual(steps.Count(), 10);

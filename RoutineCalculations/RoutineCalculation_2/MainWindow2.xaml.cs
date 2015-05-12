@@ -112,16 +112,6 @@ namespace RoutineCalculation_2
                 MessageBox.Show("Введите число в поле a.");
                 return false;
             }
-            if (!int.TryParse(MTextBox.Text, out _M))
-            {
-                MessageBox.Show("Введите число в поле n.");
-                return false;
-            }
-            if (_M < 1 || _M > _n)
-            {
-                MessageBox.Show("M должно быть больше 0, но меньше n");
-                return false;
-            }
             if (!double.TryParse(bTextBox.Content.ToString(), out _b))
             {
                 MessageBox.Show("Введите число в поле a.");
@@ -167,7 +157,7 @@ namespace RoutineCalculation_2
         {
             _histogram = new DoubleHistogram(_rndVariationalSeries);
 
-            _equalProbabilityHistogramBars = _histogram.EqualProbabilityHistogram(_M).ToArray();
+            _equalProbabilityHistogramBars = _histogram.EqualProbabilityHistogram().ToArray();
         }
 
         private void DisplayEqualProbabilityHistogram()
@@ -327,7 +317,7 @@ namespace RoutineCalculation_2
         {
             try
             {
-                var bars = _histogram.EqualProbabilityHistogram(_M);
+                var bars = _histogram.EqualProbabilityHistogram();
                 var groupDistFunc = new DoubleGroupDistributionFunction(bars, _n);
 
                 var functionPoints = groupDistFunc.Function;
