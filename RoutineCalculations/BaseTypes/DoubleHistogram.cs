@@ -61,13 +61,14 @@ namespace BaseTypes
         {
             int intervalCount; // M
 
-            if (_varitionalSeriesLength <= 10000)
+            if (_varitionalSeriesLength <= 100 || _varitionalSeriesLength % 2 == 1)
             {
                 intervalCount = (int) Math.Sqrt(_varitionalSeriesLength);
             }
             else
             {
-                intervalCount = (int) (0.5*Math.Log10(_varitionalSeriesLength));
+                intervalCount = (int) (2*Math.Log10(_varitionalSeriesLength));
+                
             }
 
             return intervalCount;
@@ -93,16 +94,9 @@ namespace BaseTypes
             return intervals;
         }
 
-        public IEnumerable<Bar> EqualProbabilityHistogram(int intervalCount)
+        public IEnumerable<Bar> EqualProbabilityHistogram()
         {
-            if (intervalCount < 1)
-            {
-                throw new ArgumentOutOfRangeException("intervalCount");
-            }
-            if (!IsCorrectIntervalCountForEqualProbabilityHistogram(_varitionalSeriesLength, intervalCount))
-            {
-                throw new ArgumentException("Incorrect interval count.", "intervalCount");
-            }
+            var intervalCount = DefineBarCount(_varitionalSeriesLength);
 
             var valuesPerInterval = _varitionalSeriesLength/intervalCount; // h
             var bars = new List<Bar>(intervalCount);
