@@ -39,7 +39,8 @@ namespace RoutineCalculation_2
                 {new DoubleInterval(1d/3, double.PositiveInfinity), x => 0}
             }
         };
-
+        private const int TeorFncPointsCount = 10000;
+        private const double TeorFuncInterval = 0.0001;
         private IEnumerable<Point> _teoreticalFunctionPoints;
         private DoubleHistogram _histogram;
         private double[] _rndVariationalSeries;
@@ -149,7 +150,7 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, TeorFncPointsCount, x => x += TeorFuncInterval, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
@@ -351,7 +352,7 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalDensityFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a)/_n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, TeorFncPointsCount, x => x += TeorFuncInterval, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =

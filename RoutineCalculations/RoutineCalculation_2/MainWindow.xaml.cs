@@ -47,7 +47,8 @@ namespace RoutineCalculation_2
         private List<Point> _teoreticalDensityFunctionPoints;
         private Bar[] _equalIntervalHistogramBars;
         private DoubleHistogram _histogram;
-
+        private const int TeorFncPointsCount = 10000;
+        private const double TeorFuncInterval = 0.0001;
 
         public MainWindow()
         {
@@ -142,14 +143,12 @@ namespace RoutineCalculation_2
             var rndValues = new SequenceGenerator<double>(0, _n, v => v += 1,
                 x => _function.Calculate(rnd.NextDouble() * (_b - _a) + _a));
             var roundedValues = rndValues.Select(v => (double)Math.Round((decimal)v, 6)).ToList();
-
-            new DoubleFrequencyFunction(roundedValues);
         }
 
 
         private void BuildTeoreticalFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, TeorFncPointsCount, x => x +=TeorFuncInterval, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
@@ -351,7 +350,7 @@ namespace RoutineCalculation_2
 
         private void BuildTeoreticalDensityFunction()
         {
-            var xValues = new SequenceGenerator<double>(_a, _n, x => x += Math.Abs(_b - _a) / _n, x => x).ToList();
+            var xValues = new SequenceGenerator<double>(_a, TeorFncPointsCount, x => x += TeorFuncInterval, x => x).ToList();
             var yValues = xValues.Select(x => _teoreticalDensityFunc.Calculate(x));
 
             var points =
@@ -372,7 +371,7 @@ namespace RoutineCalculation_2
             AnalyticsDensityFunctionGrid.Children.Add(CreateLabel("Y", 1));
 
             var column = 1;
-            foreach (var point in _teoreticalFunctionPoints.Where(p => p.Y != 0))
+            foreach (var point in _teoreticalDensityFunctionPoints.Where(p => p.Y != 0))
             {
                 AnalyticsDensityFunctionGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
