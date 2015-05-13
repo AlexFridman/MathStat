@@ -23,11 +23,18 @@ namespace BaseTypes
             _varitionalSeriesLength = _orederdVariationalSeries.Count;
         }
 
-        public IEnumerable<Bar> EqualIntervalHistogram()
+        public IEnumerable<Bar> EqualIntervalHistogram(int barCount = -1)
         {
-            var intervalCount = DefineBarCount(_varitionalSeriesLength); // M
+            if (barCount < 1 & barCount != -1)
+            {
+                throw new ArgumentOutOfRangeException("barCount");
+            }
+            if(barCount == -1)
+            {
+                barCount = DefineBarCount(_varitionalSeriesLength); // M
+            }
 
-            var intervals = BuildEqualIntervals(_minValue, _maxValue, intervalCount);
+            var intervals = BuildEqualIntervals(_minValue, _maxValue, barCount);
             var histogramSteps =
                 intervals.Select(i => new Bar(_varitionalSeriesLength) {Interval = i, ValuesCount = 0}).ToList();
 
@@ -94,18 +101,29 @@ namespace BaseTypes
             return intervals;
         }
 
-        public IEnumerable<Bar> EqualProbabilityHistogram()
+        public IEnumerable<Bar> EqualProbabilityHistogram(int barCount = -1)
         {
-            var intervalCount = DefineBarCount(_varitionalSeriesLength);
+            if (barCount < 1 & barCount != -1)
+            {
+                throw new ArgumentOutOfRangeException("barCount");
+            }
+            if (barCount == -1)
+            {
+                barCount = DefineBarCount(_varitionalSeriesLength); // M
+            }
+            if (!IsCorrectIntervalCountForEqualProbabilityHistogram(_varitionalSeriesLength, barCount))
+            {
+                throw new ArgumentException("Incorrect bar count.");
+            }
 
-            var valuesPerInterval = _varitionalSeriesLength/intervalCount; // h
-            var bars = new List<Bar>(intervalCount);
+            var valuesPerInterval = _varitionalSeriesLength / barCount; // h
+            var bars = new List<Bar>(barCount);
             double tempLeft = _orederdVariationalSeries.First();
             double tempRight = (_orederdVariationalSeries.Skip(valuesPerInterval).First() +
                                 _orederdVariationalSeries.Take(valuesPerInterval).Last()
                 )/2;
 
-            for (var i = 0; i < intervalCount; i++)
+            for (var i = 0; i < barCount; i++)
             {
                 var bar = new Bar(_varitionalSeriesLength)
                 {
@@ -117,7 +135,7 @@ namespace BaseTypes
 
                 tempLeft = tempRight;
 
-                if (i < intervalCount - 2)
+                if (i < barCount - 2)
                 {
                     tempRight = (_orederdVariationalSeries.Skip((i + 2) * valuesPerInterval).First() +
                                     _orederdVariationalSeries.Take((i + 2) * valuesPerInterval).Last()) / 2;    
