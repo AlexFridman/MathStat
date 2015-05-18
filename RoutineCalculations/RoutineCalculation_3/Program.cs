@@ -104,7 +104,7 @@ namespace RoutineCalculation_3
             var variationalSeries =
                 new SequenceGenerator<double>(0, KolmogorovVariationalSeriesLength,
                     x => x += 10d/KolmogorovVariationalSeriesLength,
-                    x => Function.Calculate(rnd.NextDouble()*4 - 1)).Select(v => Math.Round(v, 3)).OrderBy(
+                    x => Function.Calculate(rnd.NextDouble()*10 - 0)).Select(v => Math.Round(v, 3)).OrderBy(
                         x => x).ToList();
 
             var freqFunc = new DoubleFrequencyFunction(variationalSeries);
@@ -162,7 +162,7 @@ namespace RoutineCalculation_3
             var variationalSeries =
                 new SequenceGenerator<double>(0, OmegaSquareVariationalSeriesLength,
                     x => x += 10d/OmegaSquareVariationalSeriesLength,
-                    x => Function.Calculate(rnd.NextDouble()*4 - 1)).Select(v => Math.Round(v, 3)).OrderBy(
+                    x => Function.Calculate(rnd.NextDouble()*10 - 0)).Select(v => Math.Round(v, 6)).OrderBy(
                         x => x).ToList();
 
             var nOmegaSquare = 1d/(12*OmegaSquareVariationalSeriesLength) +
@@ -175,6 +175,11 @@ namespace RoutineCalculation_3
             Console.WriteLine(new string('=', 80));
             Console.WriteLine("OmegaSqure Test");
             Console.WriteLine("nOmegaSquare = {0}", nOmegaSquare);
+            Console.WriteLine("_____________________________");
+            Console.WriteLine("alpha | 0.1   | 0.05  | 0.01");
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine("w2    | 0.347 | 0.461 | 0.743");
+            Console.WriteLine("-----------------------------");
         }
     }
 }
