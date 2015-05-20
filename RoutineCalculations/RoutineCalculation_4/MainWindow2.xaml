@@ -1,13 +1,12 @@
 ﻿<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml" x:Class="RoutineCalculation_4.MainWindow"
-    Title="Задание 4.1" MinHeight="350" Width="950" SizeToContent="Manual">
+    xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml" x:Class="RoutineCalculation_4.MainWindow2"
+    Title="Задание 4.2" MinHeight="350" Width="950" SizeToContent="Manual">
     <TabControl>
         <TabItem Header="Инфо">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -32,7 +31,7 @@
                 <TextBox Name="DecimalsTextBox" Grid.Row="4" Grid.Column="1">3</TextBox>
                 <Button Name="Button" Grid.Row="5" Grid.Column="1" IsDefault="True" Content="Выполнить"
                         Click="Button_OnClick" />
-                <Button Name="ChangeTaskButton" VerticalAlignment="Top"   Grid.Row="6" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 4.2</Button>
+                <Button Name="ChangeTaskButton" VerticalAlignment="Top"   Grid.Row="6" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 4.1</Button>
             </Grid>
         </TabItem>
         <TabItem Header="Пункт 1, 2">
@@ -139,7 +138,9 @@
             </ScrollViewer>
         </TabItem>
         <TabItem Header="По объему выборки">
-            <c1:C1Chart Name="NCompare"> <c1:Legend></c1:Legend></c1:C1Chart>
+            <c1:C1Chart Name="NCompare">
+                <c1:Legend></c1:Legend>
+            </c1:C1Chart>
         </TabItem>
     </TabControl>
 

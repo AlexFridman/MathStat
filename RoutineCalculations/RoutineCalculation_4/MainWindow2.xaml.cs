@@ -15,7 +15,7 @@ namespace RoutineCalculation_4
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow2 : Window
     {
         private int _n;
         private readonly int _a = 0;
@@ -38,7 +38,7 @@ namespace RoutineCalculation_4
         private List<Point> _secondEstimateFuncPoints;
         private double _teorExpectation = 5.6;
         private double _teorDeviation = 1.797;
-        public MainWindow()
+        public MainWindow2()
         {
             InitializeComponent();
             BuildGraph();
@@ -107,7 +107,7 @@ namespace RoutineCalculation_4
 
         private void DisplayDeviationEstimate()
         {
-            var deviationEstimate = Task1.DeviationEstimate(_variationalSeries);
+            var deviationEstimate = Task2.DeviationEstimate(_variationalSeries);
             DeviationEstimateLabel.Content = deviationEstimate;
         }
 
@@ -117,15 +117,59 @@ namespace RoutineCalculation_4
     
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries,
-                    Task1.ExpectationEstimate(_variationalSeries), Task1.DeviationEstimate(_variationalSeries),
+                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,Task2.DeviationEstimate(_variationalSeries),
                     1 - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
 
             _firstEstimates = estimates;
         }
+        private void BuildGraph()
+        {
+            var firstPoints = new List<Point>();
+            for (int n = 5; n < 1000; n += 5)
+            {
+                var rnd = new Random();
+                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
+                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
 
+
+                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
+                    Task1.ExpectationEstimate(varSeries), Task1.DeviationEstimate(varSeries), 0.95);
+                firstPoints.Add(new Point(n, estimateInterval.Length));
+            }
+
+            var secondPoints = new List<Point>();
+            for (int n = 5; n < 1000; n += 5)
+            {
+                var rnd = new Random();
+                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
+                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
+
+
+                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
+                    Task1.ExpectationEstimate(varSeries), _teorDeviation, 0.95);
+                secondPoints.Add(new Point(n, estimateInterval.Length));
+            }
+
+            NCompare.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = firstPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line,
+                Label = "эмпирич МО"
+            });
+
+            NCompare.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = secondPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line,
+                Label = "теоретич МО"
+            });
+        }
         private void DisplayEstimatesTable1()
         {
             ExpectationEstimateTable1.ColumnDefinitions.Clear();
@@ -203,7 +247,7 @@ namespace RoutineCalculation_4
             var estimates = new Dictionary<double, DoubleInterval>();
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, _teorExpectation,
+                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,
                     _teorDeviation, 1 - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
@@ -321,73 +365,28 @@ namespace RoutineCalculation_4
 
         private void ChangeTaskButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var w2 = new MainWindow2
+            var w1 = new MainWindow
             {
                 Top = Top,
                 Left = Left
             };
-            w2.Show();
+            w1.Show();
             Close();
-        }
-
-        private void BuildGraph()
-        {
-            var firstPoints = new List<Point>();
-            for (int n = 5; n < 1000; n += 5)
-            {
-                var rnd = new Random();
-                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
-                    x => _function.Calculate(rnd.NextDouble()*10)).OrderBy(x => x).ToList();
-
-
-                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
-                    Task1.ExpectationEstimate(varSeries), Task1.DeviationEstimate(varSeries), 0.95);
-                firstPoints.Add(new Point(n, estimateInterval.Length));
-            }
-
-            var secondPoints = new List<Point>();
-            for (int n = 5; n < 1000; n += 5)
-            {
-                var rnd = new Random();
-                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
-                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
-
-
-                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
-                    Task1.ExpectationEstimate(varSeries), _teorDeviation, 0.95);
-                secondPoints.Add(new Point(n, estimateInterval.Length));
-            }
-
-            NCompare.Data.Children.Add(new XYDataSeries
-            {
-                ItemsSource = firstPoints,
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line,
-                Label = "эмпирич МО"
-            });
-
-            NCompare.Data.Children.Add(new XYDataSeries
-            {
-                ItemsSource = secondPoints,
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line,
-                Label = "теоретич МО"
-            });
         }
     }
 
-    public static class Task1
+    public static class Task2
     {
 
-        public static DoubleInterval ExpectationConfidenceInterval(List<double> variationalSeries,
-            double expectationEstimate, double deviationEstimate, double significanceLevel)
+        public static DoubleInterval DeviationConfidenceInterval(int seriesLength, double deviation, double significanceLevel)
         {
-            var k = GetKByVariationalSeriesLength(variationalSeries.Count, significanceLevel);
-            var eps = k*Math.Sqrt(deviationEstimate/variationalSeries.Count);
+            var k = seriesLength - 1;
+            double alpha = 1 - significanceLevel;
+            var a = alpha/2;
+            var chi1 = alglib.invchisquaredistribution(k, a);
+            var chi2 = alglib.invchisquaredistribution(k, significanceLevel + a);
 
-            return new DoubleInterval(expectationEstimate - eps, expectationEstimate + eps);
+            return new DoubleInterval(k * deviation / (chi2 > chi1 ? chi2 : chi1), k * deviation / (chi1 > chi2 ? chi2 : chi1));
         }
 
         private static double GetKByVariationalSeriesLength(int seriesLength, double significanceLevel)
