@@ -26,6 +26,7 @@ namespace RoutineCalculation_3
             PearsonTest();
             KolmogorovTest();
             OmegaSquareTest();
+            Console.ReadKey();
         }
 
         private static void PearsonTest(int barCount = 10)
@@ -86,6 +87,7 @@ namespace RoutineCalculation_3
             var k = barCount - 2 - 1;
             Console.WriteLine(new string('=', 80));
             Console.WriteLine("Pearson Test");
+            Console.WriteLine("n = {0}", ChiSquareVariationalSeriesLength);
             Console.WriteLine("chiSquare = {0}", chiSquare);
             Console.WriteLine("count of bars = {0}", barCount);
             Console.WriteLine("S = 2 (Uniform distribution)");
@@ -148,6 +150,7 @@ namespace RoutineCalculation_3
 
             Console.WriteLine(new string('=', 80));
             Console.WriteLine("Kolmogorov test");
+            Console.WriteLine("n = {0}", KolmogorovVariationalSeriesLength);
             Console.WriteLine("lambda = {0}", lambda);
             Console.WriteLine("_______________________________");
             Console.WriteLine("alpha         | 0.05   | 0.02");
@@ -175,6 +178,7 @@ namespace RoutineCalculation_3
 
             Console.WriteLine(new string('=', 80));
             Console.WriteLine("OmegaSqure Test");
+            Console.WriteLine("n = {0}", OmegaSquareVariationalSeriesLength);
             Console.WriteLine("nOmegaSquare = {0}", omegaSquare);
             Console.WriteLine("_____________________________");
             Console.WriteLine("alpha | 0.1   | 0.05  | 0.01");
