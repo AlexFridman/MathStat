@@ -12,6 +12,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -19,11 +21,15 @@
                 </Grid.ColumnDefinitions>
                 <Label Content="Плотность распределеня" />
                 <Label Grid.Column="1" Content="f(x) = 1(x+3)" />
-                <Label Grid.Row="2" Content="Размер выборки" />
-                <TextBox Name="NTextBox" Grid.Row="2" Grid.Column="1">20</TextBox>
-                <Label Grid.Row="3" Content="Decimals" />
-                <TextBox Name="DecimalsTextBox" Grid.Row="3" Grid.Column="1">3</TextBox>
-                <Button Name="Button" Grid.Row="4" Grid.Column="1" IsDefault="True" Content="Выполнить"
+                <Label  Grid.Row="1" Content="Теоретическое МО" />
+                <Label Grid.Row="1" Grid.Column="1" Content="5.6" />
+                <Label Grid.Row="2" Content="Теоретическая дисперсия" />
+                <Label Grid.Row="2" Grid.Column="1" Content="1.797" />
+                <Label Grid.Row="3" Content="Размер выборки" />
+                <TextBox Name="NTextBox" Grid.Row="3" Grid.Column="1">20</TextBox>
+                <Label Grid.Row="4" Content="Decimals" />
+                <TextBox Name="DecimalsTextBox" Grid.Row="4" Grid.Column="1">3</TextBox>
+                <Button Name="Button" Grid.Row="5" Grid.Column="1" IsDefault="True" Content="Выполнить"
                         Click="Button_OnClick" />
             </Grid>
         </TabItem>

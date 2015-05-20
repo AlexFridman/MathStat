@@ -36,7 +36,8 @@ namespace RoutineCalculation_4
         private List<Point> _firstEstimateFuncPoints;
         private Dictionary<double, DoubleInterval> _secondEstimates;
         private List<Point> _secondEstimateFuncPoints;
-
+        private double _teorExpectation = 5.6;
+        private double _teorDeviation = 1.797;
         public MainWindow()
         {
             InitializeComponent();
@@ -112,10 +113,10 @@ namespace RoutineCalculation_4
         private void BuildFirstEstimates()
         {
             var estimates = new Dictionary<double, DoubleInterval>();
-
+    
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, 1 - alpha);
+                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
 
@@ -197,12 +198,10 @@ namespace RoutineCalculation_4
         private void BuildSecondEstimates()
         {
             var estimates = new Dictionary<double, DoubleInterval>();
-            var expectationEstimate = Task1.ExpectationEstimate(_variationalSeries);
-            var deviationEstimate = Task1.DeviationEstimate(_variationalSeries);
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, expectationEstimate,
-                    deviationEstimate, 1 - alpha);
+                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, _teorExpectation,
+                    _teorDeviation, 1 - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
 
@@ -292,7 +291,7 @@ namespace RoutineCalculation_4
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
                 ChartType = ChartType.Line,
-                Label = "с дисперсией"
+                Label = "с теор. МО"
             });
             CompareChart.Data.Children.Add(new XYDataSeries
             {
@@ -300,7 +299,7 @@ namespace RoutineCalculation_4
                 XValueBinding = new Binding("X"),
                 ValueBinding = new Binding("Y"),
                 ChartType = ChartType.Line,
-                Label = "без десперсии"
+                Label = "с эмпирич. МО"
             });
         }
 
