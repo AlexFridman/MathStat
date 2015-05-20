@@ -137,6 +137,14 @@
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
+<<<<<<< HEAD
+=======
+        <TabItem Header="По объему выборки">
+            <c1:C1Chart Name="NCompare">
+                <c1:Legend></c1:Legend>
+            </c1:C1Chart>
+        </TabItem>
+>>>>>>> routine_calc_4
     </TabControl>
 
 </Window>

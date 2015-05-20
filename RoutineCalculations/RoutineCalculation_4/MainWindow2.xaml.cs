@@ -41,6 +41,10 @@ namespace RoutineCalculation_4
         public MainWindow2()
         {
             InitializeComponent();
+<<<<<<< HEAD
+=======
+            BuildGraph();
+>>>>>>> routine_calc_4
         }
 
 
@@ -123,7 +127,56 @@ namespace RoutineCalculation_4
 
             _firstEstimates = estimates;
         }
+<<<<<<< HEAD
 
+=======
+        private void BuildGraph()
+        {
+            var firstPoints = new List<Point>();
+            for (int n = 5; n < 1000; n += 5)
+            {
+                var rnd = new Random();
+                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
+                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
+
+
+                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
+                    Task1.ExpectationEstimate(varSeries), Task1.DeviationEstimate(varSeries), 0.95);
+                firstPoints.Add(new Point(n, estimateInterval.Length));
+            }
+
+            var secondPoints = new List<Point>();
+            for (int n = 5; n < 1000; n += 5)
+            {
+                var rnd = new Random();
+                var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
+                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
+
+
+                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
+                    Task1.ExpectationEstimate(varSeries), _teorDeviation, 0.95);
+                secondPoints.Add(new Point(n, estimateInterval.Length));
+            }
+
+            NCompare.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = firstPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line,
+                Label = "эмпирич МО"
+            });
+
+            NCompare.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = secondPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line,
+                Label = "теоретич МО"
+            });
+        }
+>>>>>>> routine_calc_4
         private void DisplayEstimatesTable1()
         {
             ExpectationEstimateTable1.ColumnDefinitions.Clear();
