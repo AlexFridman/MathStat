@@ -171,10 +171,11 @@ namespace RoutineCalculation_3
                                        Math.Pow(
                                            Function.Calculate(x) - ((i + 1) - 0.5)/OmegaSquareVariationalSeriesLength, 2))
                                    .Sum();
+            var omegaSquare = nOmegaSquare/OmegaSquareVariationalSeriesLength;
 
             Console.WriteLine(new string('=', 80));
             Console.WriteLine("OmegaSqure Test");
-            Console.WriteLine("nOmegaSquare = {0}", nOmegaSquare);
+            Console.WriteLine("nOmegaSquare = {0}", omegaSquare);
             Console.WriteLine("_____________________________");
             Console.WriteLine("alpha | 0.1   | 0.05  | 0.01");
             Console.WriteLine("-----------------------------");
