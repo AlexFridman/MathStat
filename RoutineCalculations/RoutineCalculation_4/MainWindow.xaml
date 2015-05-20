@@ -1,0 +1,143 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml" x:Class="RoutineCalculation_4.MainWindow"
+    Title="Задание 4.1" MinHeight="350" Width="950" SizeToContent="Manual">
+    <TabControl>
+        <TabItem Header="Инфо">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Плотность распределеня" />
+                <Label Grid.Column="1" Content="f(x) = 1(x+3)" />
+                <Label  Grid.Row="1" Content="Теоретическое МО" />
+                <Label Grid.Row="1" Grid.Column="1" Content="5.6" />
+                <Label Grid.Row="2" Content="Теоретическая дисперсия" />
+                <Label Grid.Row="2" Grid.Column="1" Content="1.797" />
+                <Label Grid.Row="3" Content="Размер выборки" />
+                <TextBox Name="NTextBox" Grid.Row="3" Grid.Column="1">20</TextBox>
+                <Label Grid.Row="4" Content="Decimals" />
+                <TextBox Name="DecimalsTextBox" Grid.Row="4" Grid.Column="1">3</TextBox>
+                <Button Name="Button" Grid.Row="5" Grid.Column="1" IsDefault="True" Content="Выполнить"
+                        Click="Button_OnClick" />
+                <Button Name="ChangeTaskButton" VerticalAlignment="Top"   Grid.Row="6" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 4.2</Button>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Пункт 1, 2">
+            <ScrollViewer>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Точечная оценка дисперсии" />
+                        <Label x:Name="DeviationEstimateLabel" Grid.Column="1" Content="undefined" />
+                    </Grid>
+                    <Expander Grid.Row="1" Header="Оценки при неизвестной дисперсии">
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                            <Grid x:Name="ExpectationEstimateTable1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+                        </ScrollViewer>
+                    </Expander>
+                    <Expander Grid.Row="2" Header="Зависимость интервала от alpha">
+                        <c1:C1Chart Name="FirstEstimateChart" HorizontalAlignment="Left" Height="700"
+                                    Width="700" />
+
+                    </Expander>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Пункт 3, 4">
+            <ScrollViewer>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="186*" />
+                        <ColumnDefinition Width="733*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                    <Expander Grid.Row="1" Grid.ColumnSpan="2" Header="Оценки с известной дисперсией">
+                        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                            <Grid x:Name="ExpectationEstimateTable2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+                        </ScrollViewer>
+                    </Expander>
+                    <Expander Grid.Row="2" Grid.ColumnSpan="2" Header="Зависимость интервала от alpha">
+                        <c1:C1Chart Name="SecondEstimateChart" HorizontalAlignment="Left" Height="700"
+                                    Width="700" />
+
+                    </Expander>
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="Сравнение">
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical">
+                    <Label HorizontalAlignment="Center">Без дисперсии</Label>
+                    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                        <Label Height="{Binding ElementName=ExpectationEstimateTable1, Path=ActualHeight}"
+                               Width="{Binding ElementName=ExpectationEstimateTable1, Path=ActualWidth}">
+                            <Label.Background>
+                                <VisualBrush Visual="{Binding ElementName=ExpectationEstimateTable1}" />
+                            </Label.Background>
+                        </Label>
+                    </ScrollViewer>
+                    <Label HorizontalAlignment="Center">С дисперсией</Label>
+                    <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                        <Label Height="{Binding ElementName=ExpectationEstimateTable2, Path=ActualHeight}"
+                               Width="{Binding ElementName=ExpectationEstimateTable2, Path=ActualWidth}">
+                            <Label.Background>
+                                <VisualBrush Visual="{Binding ElementName=ExpectationEstimateTable2}" />
+                            </Label.Background>
+                        </Label>
+                    </ScrollViewer>
+                    <Expander Header="Сравнительный график">
+                        <c1:C1Chart Name="CompareChart" HorizontalAlignment="Left" Height="700"
+                                    Width="700">
+                            <c1:C1ChartLegend />
+                        </c1:C1Chart>
+                    </Expander>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+    </TabControl>
+
+</Window>
