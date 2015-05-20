@@ -22,7 +22,7 @@
                 </Grid.ColumnDefinitions>
                 <Label Content="Плотность распределеня" />
                 <Label Grid.Column="1" Content="f(x) = 1(x+3)" />
-                <Label  Grid.Row="1" Content="Теоретическое МО" />
+                <Label Grid.Row="1" Content="Теоретическое МО" />
                 <Label Grid.Row="1" Grid.Column="1" Content="5.6" />
                 <Label Grid.Row="2" Content="Теоретическая дисперсия" />
                 <Label Grid.Row="2" Grid.Column="1" Content="1.797" />
@@ -32,7 +32,10 @@
                 <TextBox Name="DecimalsTextBox" Grid.Row="4" Grid.Column="1">3</TextBox>
                 <Button Name="Button" Grid.Row="5" Grid.Column="1" IsDefault="True" Content="Выполнить"
                         Click="Button_OnClick" />
-                <Button Name="ChangeTaskButton" VerticalAlignment="Top"   Grid.Row="6" Grid.Column="0" Click="ChangeTaskButton_OnClick">Перейти к заданию 4.2</Button>
+                <Button Name="ChangeTaskButton" VerticalAlignment="Top" Grid.Row="6" Grid.Column="0"
+                        Click="ChangeTaskButton_OnClick">
+                    Перейти к заданию 4.2
+                </Button>
             </Grid>
         </TabItem>
         <TabItem Header="Пункт 1, 2">
@@ -139,7 +142,26 @@
             </ScrollViewer>
         </TabItem>
         <TabItem Header="По объему выборки">
-            <c1:C1Chart Name="NCompare"> <c1:Legend></c1:Legend></c1:C1Chart>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label>alpha</Label>
+                <TextBox Name="Alpha" Grid.Row="0" Grid.Column="1">0.05</TextBox>
+                <Label Grid.Row="1" Grid.Column="0">YMaxValue</Label>
+                <TextBox Name="YMax" Grid.Row="1" Grid.Column="1">10</TextBox>
+                <Button Name="NGraphButton" Grid.Row="2" Grid.Column="1" Click="NGraphButton_OnClick">Построить</Button>
+                <c1:C1Chart Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" Name="NCompare">
+                    <c1:C1ChartLegend />
+                </c1:C1Chart>
+            </Grid>
         </TabItem>
     </TabControl>
 

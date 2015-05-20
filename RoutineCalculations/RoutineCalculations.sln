@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutineCalculation_2", "Rou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutineCalculation_4", "RoutineCalculation_4\RoutineCalculation_4.csproj", "{2C65AB06-F38E-43DD-B3FA-2505AA3E8A19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoutineCalculation_3", "RoutineCalculation_3\RoutineCalculation_3.csproj", "{F358CCA6-B11E-4CA4-8ABF-FE22D69E37F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,7 +41,10 @@ Global
 		{2C65AB06-F38E-43DD-B3FA-2505AA3E8A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C65AB06-F38E-43DD-B3FA-2505AA3E8A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C65AB06-F38E-43DD-B3FA-2505AA3E8A19}.Release|Any CPU.Build.0 = Release|Any CPU
-
+		{F358CCA6-B11E-4CA4-8ABF-FE22D69E37F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F358CCA6-B11E-4CA4-8ABF-FE22D69E37F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F358CCA6-B11E-4CA4-8ABF-FE22D69E37F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F358CCA6-B11E-4CA4-8ABF-FE22D69E37F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

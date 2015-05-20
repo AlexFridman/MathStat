@@ -17,11 +17,9 @@ namespace RoutineCalculation_4
     /// </summary>
     public partial class MainWindow2 : Window
     {
-        private int _n;
         private readonly int _a = 0;
-        private readonly int _b = 10;
         private readonly double[] _alphas = {0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5};
-        private  int _decimals = 3;
+        private readonly int _b = 10;
 
         private readonly PiecewiseFunction<double> _function = new PiecewiseFunction<double>
         {
@@ -31,22 +29,21 @@ namespace RoutineCalculation_4
             }
         };
 
-        private List<double> _variationalSeries;
-        private Dictionary<double, DoubleInterval> _firstEstimates;
+        private readonly double _teorDeviation = 1.797;
+        private int _decimals = 3;
         private List<Point> _firstEstimateFuncPoints;
-        private Dictionary<double, DoubleInterval> _secondEstimates;
+        private Dictionary<double, DoubleInterval> _firstEstimates;
+        private int _n;
         private List<Point> _secondEstimateFuncPoints;
-        private double _teorExpectation = 5.6;
-        private double _teorDeviation = 1.797;
+        private Dictionary<double, DoubleInterval> _secondEstimates;
+        private List<double> _variationalSeries;
+
         public MainWindow2()
         {
             InitializeComponent();
-<<<<<<< HEAD
-=======
-            BuildGraph();
->>>>>>> routine_calc_4
-        }
+            NGraphButton_OnClick(null, null);
 
+        }
 
         private void Button_OnClick(object sender, RoutedEventArgs e)
         {
@@ -70,7 +67,6 @@ namespace RoutineCalculation_4
 
             DisplayCompareChart();
         }
-
 
         private bool TryReadParameters()
         {
@@ -117,46 +113,86 @@ namespace RoutineCalculation_4
         private void BuildFirstEstimates()
         {
             var estimates = new Dictionary<double, DoubleInterval>();
-    
+
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,Task2.DeviationEstimate(_variationalSeries),
+                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,
+                    Task2.DeviationEstimate(_variationalSeries),
                     1 - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
 
             _firstEstimates = estimates;
         }
-<<<<<<< HEAD
+        private void NGraphButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            double alpha;
+            if (!double.TryParse(Alpha.Text, NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"), out alpha))
+            {
+                MessageBox.Show("Введите корректное alpha");
+                return;
+            }
+            if (alpha < 0.0001 || alpha > 1)
+            {
+                MessageBox.Show("Введите корректное alpha");
+                return;
+            }
+            double y;
+            if (!double.TryParse(YMax.Text, NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"), out y))
+            {
+                MessageBox.Show("Введите корректный y");
+                return;
+            }
+            if (y < 0.0001 || y > 100)
+            {
+                MessageBox.Show("Введите корректный y");
+                return;
+            }
+            NCompare.View.AxisY.Max = y;
+            BuildGraph(alpha);
 
-=======
-        private void BuildGraph()
+        }
+
+        private void BuildGraph(double alpha)
         {
             var firstPoints = new List<Point>();
-            for (int n = 5; n < 1000; n += 5)
+            for (var n = 5; n < 1000; n += 5)
             {
                 var rnd = new Random();
                 var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
-                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
+                    x => _function.Calculate(rnd.NextDouble()*10)).OrderBy(x => x).ToList();
 
 
-                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
-                    Task1.ExpectationEstimate(varSeries), Task1.DeviationEstimate(varSeries), 0.95);
+                var estimateInterval = Task2.DeviationConfidenceInterval(varSeries.Count,
+                    Task1.DeviationEstimate(varSeries), 1 - alpha);
                 firstPoints.Add(new Point(n, estimateInterval.Length));
             }
 
             var secondPoints = new List<Point>();
-            for (int n = 5; n < 1000; n += 5)
+            for (var n = 5; n < 1000; n += 5)
             {
                 var rnd = new Random();
                 var varSeries = new SequenceGenerator<double>(0, n, x => x += 1,
-                    x => _function.Calculate(rnd.NextDouble() * 10)).OrderBy(x => x).ToList();
+                    x => _function.Calculate(rnd.NextDouble()*10)).OrderBy(x => x).ToList();
 
 
-                var estimateInterval = Task1.ExpectationConfidenceInterval(varSeries,
-                    Task1.ExpectationEstimate(varSeries), _teorDeviation, 0.95);
+                var estimateInterval = Task2.DeviationConfidenceInterval(varSeries.Count, _teorDeviation, 1 - alpha);
                 secondPoints.Add(new Point(n, estimateInterval.Length));
             }
+
+            using (var stream = File.CreateText("points.txt"))
+            {
+                foreach (var firstPoint in firstPoints)
+                {
+                    stream.WriteLine(firstPoint);
+                }
+                stream.WriteLine("============================");
+                foreach (var firstPoint in secondPoints)
+                {
+                    stream.WriteLine(firstPoint);
+                }
+            }
+            NCompare.Data.Children.Clear();
 
             NCompare.Data.Children.Add(new XYDataSeries
             {
@@ -176,7 +212,6 @@ namespace RoutineCalculation_4
                 Label = "теоретич МО"
             });
         }
->>>>>>> routine_calc_4
         private void DisplayEstimatesTable1()
         {
             ExpectationEstimateTable1.ColumnDefinitions.Clear();
@@ -206,7 +241,7 @@ namespace RoutineCalculation_4
 
                 var tetta = Math.Round(estimateInterval.Middle, _decimals).ToString(CultureInfo.InvariantCulture);
                 var eps =
-                    Math.Round((estimateInterval.Right - estimateInterval.Left) / 2, _decimals)
+                    Math.Round((estimateInterval.Right - estimateInterval.Left)/2, _decimals)
                         .ToString(CultureInfo.InvariantCulture);
                 var result = string.Format("{0}±{1}", tetta, eps);
 
@@ -246,93 +281,6 @@ namespace RoutineCalculation_4
                 ChartType = ChartType.Line
             });
         }
-
-        #region second estimates
-
-        private void BuildSecondEstimates()
-        {
-            var estimates = new Dictionary<double, DoubleInterval>();
-            foreach (var alpha in _alphas)
-            {
-                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,
-                    _teorDeviation, 1 - alpha);
-                estimates.Add(alpha, estimateInterval);
-            }
-
-            _secondEstimates = estimates;
-        }
-
-        private void DisplayEstimatesTable2()
-        {
-            ExpectationEstimateTable2.ColumnDefinitions.Clear();
-            ExpectationEstimateTable2.Children.Clear();
-            ExpectationEstimateTable2.ColumnDefinitions.Add(new ColumnDefinition());
-            var alphaLabel = CreateLabel("alpha");
-            var mLabel = CreateLabel("m*", 1);
-            var intervalLabel = CreateLabel("[,]", 2);
-
-            ExpectationEstimateTable2.Children.Add(alphaLabel);
-            ExpectationEstimateTable2.Children.Add(mLabel);
-            ExpectationEstimateTable2.Children.Add(intervalLabel);
-
-            var coulmn = 1;
-            foreach (var estimate in _secondEstimates)
-            {
-                ExpectationEstimateTable2.ColumnDefinitions.Add(new ColumnDefinition());
-                var estimateInterval = estimate.Value;
-
-                var left = Math.Round(estimateInterval.Left, _decimals);
-                var rigth = Math.Round(estimateInterval.Right, _decimals);
-                var interval = string.Format("[{0}, {1}]", left.ToString(CultureInfo.InvariantCulture),
-                    rigth.ToString(CultureInfo.InvariantCulture));
-
-
-                intervalLabel = CreateLabel(interval, 2, coulmn);
-
-                var tetta = Math.Round(estimateInterval.Middle, _decimals).ToString(CultureInfo.InvariantCulture);
-                var eps =
-                    Math.Round((estimateInterval.Right - estimateInterval.Left) / 2, _decimals)
-                        .ToString(CultureInfo.InvariantCulture);
-                var result = string.Format("{0}±{1}", tetta, eps);
-
-                alphaLabel = CreateLabel(estimate.Key.ToString(CultureInfo.InvariantCulture), 0, coulmn);
-                mLabel = CreateLabel(result, 1, coulmn);
-
-                ExpectationEstimateTable2.Children.Add(alphaLabel);
-                ExpectationEstimateTable2.Children.Add(mLabel);
-                ExpectationEstimateTable2.Children.Add(intervalLabel);
-                coulmn++;
-            }
-        }
-
-        private void BuildSecondEstimateFunc()
-        {
-            var points = new List<Point>();
-            foreach (var estimate in _secondEstimates)
-            {
-                var point = new Point(estimate.Key, estimate.Value.Length);
-
-                points.Add(point);
-            }
-
-            _secondEstimateFuncPoints = points;
-        }
-
-        private void DisplaySecondEstimateFunc()
-        {
-            SecondEstimateChart.Data.Children.Clear();
-            SecondEstimateChart.View.AxisX.Title = "alpha";
-            SecondEstimateChart.View.AxisY.Title = "interval length";
-            SecondEstimateChart.Data.Children.Add(new XYDataSeries
-            {
-                ItemsSource = _secondEstimateFuncPoints,
-                XValueBinding = new Binding("X"),
-                ValueBinding = new Binding("Y"),
-                ChartType = ChartType.Line
-            });
-        }
-
-        #endregion
 
         private void DisplayCompareChart()
         {
@@ -380,20 +328,107 @@ namespace RoutineCalculation_4
             w1.Show();
             Close();
         }
+
+        #region second estimates
+
+        private void BuildSecondEstimates()
+        {
+            var estimates = new Dictionary<double, DoubleInterval>();
+            foreach (var alpha in _alphas)
+            {
+                var estimateInterval = Task2.DeviationConfidenceInterval(_variationalSeries.Count,
+                    _teorDeviation, 1 - alpha);
+                estimates.Add(alpha, estimateInterval);
+            }
+
+            _secondEstimates = estimates;
+        }
+
+        private void DisplayEstimatesTable2()
+        {
+            ExpectationEstimateTable2.ColumnDefinitions.Clear();
+            ExpectationEstimateTable2.Children.Clear();
+            ExpectationEstimateTable2.ColumnDefinitions.Add(new ColumnDefinition());
+            var alphaLabel = CreateLabel("alpha");
+            var mLabel = CreateLabel("m*", 1);
+            var intervalLabel = CreateLabel("[,]", 2);
+
+            ExpectationEstimateTable2.Children.Add(alphaLabel);
+            ExpectationEstimateTable2.Children.Add(mLabel);
+            ExpectationEstimateTable2.Children.Add(intervalLabel);
+
+            var coulmn = 1;
+            foreach (var estimate in _secondEstimates)
+            {
+                ExpectationEstimateTable2.ColumnDefinitions.Add(new ColumnDefinition());
+                var estimateInterval = estimate.Value;
+
+                var left = Math.Round(estimateInterval.Left, _decimals);
+                var rigth = Math.Round(estimateInterval.Right, _decimals);
+                var interval = string.Format("[{0}, {1}]", left.ToString(CultureInfo.InvariantCulture),
+                    rigth.ToString(CultureInfo.InvariantCulture));
+
+
+                intervalLabel = CreateLabel(interval, 2, coulmn);
+
+                var tetta = Math.Round(estimateInterval.Middle, _decimals).ToString(CultureInfo.InvariantCulture);
+                var eps =
+                    Math.Round((estimateInterval.Right - estimateInterval.Left)/2, _decimals)
+                        .ToString(CultureInfo.InvariantCulture);
+                var result = string.Format("{0}±{1}", tetta, eps);
+
+                alphaLabel = CreateLabel(estimate.Key.ToString(CultureInfo.InvariantCulture), 0, coulmn);
+                mLabel = CreateLabel(result, 1, coulmn);
+
+                ExpectationEstimateTable2.Children.Add(alphaLabel);
+                ExpectationEstimateTable2.Children.Add(mLabel);
+                ExpectationEstimateTable2.Children.Add(intervalLabel);
+                coulmn++;
+            }
+        }
+
+        private void BuildSecondEstimateFunc()
+        {
+            var points = new List<Point>();
+            foreach (var estimate in _secondEstimates)
+            {
+                var point = new Point(estimate.Key, estimate.Value.Length);
+
+                points.Add(point);
+            }
+
+            _secondEstimateFuncPoints = points;
+        }
+
+        private void DisplaySecondEstimateFunc()
+        {
+            SecondEstimateChart.Data.Children.Clear();
+            SecondEstimateChart.View.AxisX.Title = "alpha";
+            SecondEstimateChart.View.AxisY.Title = "interval length";
+            SecondEstimateChart.Data.Children.Add(new XYDataSeries
+            {
+                ItemsSource = _secondEstimateFuncPoints,
+                XValueBinding = new Binding("X"),
+                ValueBinding = new Binding("Y"),
+                ChartType = ChartType.Line
+            });
+        }
+
+        #endregion
     }
 
     public static class Task2
     {
-
-        public static DoubleInterval DeviationConfidenceInterval(int seriesLength, double deviation, double significanceLevel)
+        public static DoubleInterval DeviationConfidenceInterval(int seriesLength, double deviation,
+            double significanceLevel)
         {
             var k = seriesLength - 1;
-            double alpha = 1 - significanceLevel;
+            var alpha = 1 - significanceLevel;
             var a = alpha/2;
             var chi1 = alglib.invchisquaredistribution(k, a);
             var chi2 = alglib.invchisquaredistribution(k, significanceLevel + a);
 
-            return new DoubleInterval(k * deviation / (chi2 > chi1 ? chi2 : chi1), k * deviation / (chi1 > chi2 ? chi2 : chi1));
+            return new DoubleInterval(k*deviation/(chi2 > chi1 ? chi2 : chi1), k*deviation/(chi1 > chi2 ? chi2 : chi1));
         }
 
         private static double GetKByVariationalSeriesLength(int seriesLength, double significanceLevel)
@@ -404,7 +439,6 @@ namespace RoutineCalculation_4
             }
             return alglib.invnormaldistribution(significanceLevel);
         }
-
 
         public static double RootMeanSquareDeflection(List<double> variationalSeries)
         {
