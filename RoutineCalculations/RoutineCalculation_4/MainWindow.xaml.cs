@@ -116,7 +116,9 @@ namespace RoutineCalculation_4
     
             foreach (var alpha in _alphas)
             {
-                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries, - alpha);
+                var estimateInterval = Task1.ExpectationConfidenceInterval(_variationalSeries,
+                    Task1.ExpectationEstimate(_variationalSeries), Task1.DeviationEstimate(_variationalSeries),
+                    1 - alpha);
                 estimates.Add(alpha, estimateInterval);
             }
 
@@ -319,10 +321,6 @@ namespace RoutineCalculation_4
 
     public static class Task1
     {
-        static Task1()
-        {
-            LoadLaplaceTable();
-        }
 
         public static DoubleInterval ExpectationConfidenceInterval(List<double> variationalSeries,
             double expectationEstimate, double deviationEstimate, double significanceLevel)
@@ -342,49 +340,6 @@ namespace RoutineCalculation_4
             return alglib.invnormaldistribution(significanceLevel);
         }
 
-        private static Dictionary<double, double> _laplaceTable;
-
-        private static void LoadLaplaceTable()
-        {
-            var lines = File.ReadAllLines("laplace.dat");
-            _laplaceTable = new Dictionary<double, double>(lines.Length);
-
-            foreach (var line in lines)
-            {
-                var kvp = line.Split(' ').Select(double.Parse).ToArray();
-                var key = kvp[0];
-                var value = kvp[1];
-
-                _laplaceTable.Add(key, value);
-            }
-        }
-
-        public static double GetTFromLaplaceTable(double F)
-        {
-            var roundedF = Math.Round(F, 3);
-
-            if (_laplaceTable.ContainsValue(roundedF))
-            {
-                return _laplaceTable.First(kvp => kvp.Value == roundedF).Key;
-            }
-
-            var firstMax = _laplaceTable.SkipWhile(kvp => kvp.Value < roundedF).First().Key;
-            var lastMin = _laplaceTable.TakeWhile(kvp => kvp.Value < roundedF).Last().Key;
-
-            return (firstMax + lastMin)/2;
-        }
-
-        public static DoubleInterval ExpectationConfidenceInterval(List<double> variationalSeries,
-            double significanceLevel)
-        {
-            var rootMeanSquareDeflection = RootMeanSquareDeflection(variationalSeries);
-            var averageValue = variationalSeries.Average();
-            var seriesLength = variationalSeries.Count;
-            var F = significanceLevel/2;
-            var t = GetTFromLaplaceTable(F);
-            var eps = t*rootMeanSquareDeflection/Math.Sqrt(seriesLength);
-            return new DoubleInterval(averageValue - eps, averageValue + eps);
-        }
 
         public static double RootMeanSquareDeflection(List<double> variationalSeries)
         {
@@ -398,8 +353,8 @@ namespace RoutineCalculation_4
 
         public static double DeviationEstimate(List<double> variationalSeries)
         {
-            var averageValue = variationalSeries.Average();
-            var deviation = 1d/(variationalSeries.Count)*
+            var averageValue = ExpectationEstimate(variationalSeries);
+            var deviation = 1d/(variationalSeries.Count - 1)*
                             variationalSeries.Select(x => Math.Pow(x - averageValue, 2)).Sum();
 
             //var deviation = variationalSeries.GroupBy(value => value, value => variationalSeries.Where(x => x == value),
